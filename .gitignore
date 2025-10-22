@@ -1,0 +1,49 @@
+# Cache i pliki tymczasowe PrestaShop
+/prestashop/cache/*
+/prestashop/download/*
+/prestashop/img/*
+!/prestashop/img/.gitkeep
+/prestashop/log/*
+/prestashop/upload/*
+/prestashop/var/*
+/prestashop/vendor/*
+
+# Konfiguracja z hasłami
+/prestashop/config/settings.inc.php
+/prestashop/config/settings.old.php
+/prestashop/app/config/parameters.yml
+/prestashop/app/config/parameters.php
+
+# Pliki administracyjne
+/prestashop/admin*/autoupgrade/*
+/prestashop/admin*/backups/*
+/prestashop/admin*/import/*
+
+# Node modules i zależności
+node_modules/
+/prestashop/node_modules/
+bower_components/
+composer.phar
+
+# Logi i testy
+*.log
+npm-debug.log.*
+/tests/errorShots/
+/tests/errorDumps/
+
+# Zdjęcia produktów - DOZWOLONE
+!/scraper/results/images/*
+
+# System operacyjny
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+.directory
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.sublime-workspace
+sftp-config.json
