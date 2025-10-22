@@ -1,0 +1,12 @@
+[scraper]
+base_url = "https://numizmatyczny.com"
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+request_delay = 1
+timeout = 10
+encoding = "utf-8"
+
+[output]
+results_dir = "results"
+categories_file = "categories.json"
+products_file = "products.json"
+images_dir = "images"
