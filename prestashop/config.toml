@@ -1,0 +1,16 @@
+[prestashop]
+api_url = "http://localhost:8080/api"
+api_key = "R38KISLE76CEIZJX8ASYHK921FPUI5WQ"
+admin_url = "http://localhost:8080/admin_folder"
+
+[import]
+products_limit = 1000
+product_quantity = 9
+active = true
+
+[paths]
+results_dir = "scraper/results"
+
+[files]
+categories_file = "categories.json"
+products_detailed_file = "products_detailed.json"
