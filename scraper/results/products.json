@@ -1,1 +1,302 @@
-[]
+[
+  {
+    "id": "2393",
+    "name": "Amerykański Orzeł - USA - 2025 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/amerykanski-orzel-1uncja-zlota",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "2394",
+    "name": "Britannia 2026 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/britannia-1uncja-zlota",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "2496",
+    "name": "Rok Królika - 2023 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/rok-krolika-2023-1oz-au",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "2168",
+    "name": "Kangur Australijski 2026 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/zlota-moneta-kangur-australisjki",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "3615",
+    "name": "Perth Mint 125. rocznica powstania - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/pl/p/Perth-Mint-125.-rocznica-powstania-1-oz-Zlota-Moneta/3615",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "2090",
+    "name": "Rok Bawoła - 2021 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/rok-bawola-2021-1oz-au",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "2089",
+    "name": "Rok Myszy - 2020 - 1 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/rok-myszy-2020-1oz-au",
+    "category_name": "Monety - 1 Uncja - 31,1 g"
+  },
+  {
+    "id": "3130",
+    "name": "Rok Węża - 2025 - 1/10 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/rok-weza-2025-1-10oz-au",
+    "category_name": "Monety - 1/10 Uncji - 3,1 g"
+  },
+  {
+    "id": "2396",
+    "name": "Britannia 2023 - 1/10 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/britannia-1-10uncji-zlota",
+    "category_name": "Monety - 1/10 Uncji - 3,1 g"
+  },
+  {
+    "id": "3142",
+    "name": "Kookaburra 2024 - 1/10 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/kookaburra-au-1-10Oz",
+    "category_name": "Monety - 1/10 Uncji - 3,1 g"
+  },
+  {
+    "id": "2398",
+    "name": "Wiedeńscy Filharmonicy 2025 - 1/10 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/wiedenscy-filharmonicy-1-10uncji-au",
+    "category_name": "Monety - 1/10 Uncji - 3,1 g"
+  },
+  {
+    "id": "1087",
+    "name": "1 Dukat Austria 1915 - Nowe Bicie",
+    "link": "https://numizmatyczny.com/1-dukat-austria-1915-nowe-bicie",
+    "category_name": "Dukaty Austriackie"
+  },
+  {
+    "id": "1912",
+    "name": "4 Dukaty - Czworak - Austria 1915 - Nowe Bicie",
+    "link": "https://numizmatyczny.com/4-dukaty-czworak-austria-1915",
+    "category_name": "Dukaty Austriackie"
+  },
+  {
+    "id": "924",
+    "name": "Złota moneta Bielik 500 zł",
+    "link": "https://numizmatyczny.com/moneta-zlota-500-zl-orzel-bielik",
+    "category_name": "Polskie monety Inwestycyjne „Bielik”"
+  },
+  {
+    "id": "1026",
+    "name": "Złota moneta Bielik 200 zł",
+    "link": "https://numizmatyczny.com/moneta-zlota-200-zl-orzel-bielik",
+    "category_name": "Polskie monety Inwestycyjne „Bielik”"
+  },
+  {
+    "id": "923",
+    "name": "Złota moneta Bielik 100 zł",
+    "link": "https://numizmatyczny.com/moneta-zlota-100-zl-orzel-bielik",
+    "category_name": "Polskie monety Inwestycyjne „Bielik”"
+  },
+  {
+    "id": "922",
+    "name": "Złota moneta Bielik 50 zł",
+    "link": "https://numizmatyczny.com/moneta-zlota-50-zl-orzel-bielik",
+    "category_name": "Polskie monety Inwestycyjne „Bielik”"
+  },
+  {
+    "id": "2582",
+    "name": "Sztabka Złota 1 Gram - Argor",
+    "link": "https://numizmatyczny.com/sztabka-zlota-1gram-argor",
+    "category_name": "Sztabki złota"
+  },
+  {
+    "id": "3404",
+    "name": "Złota moneta - 100 kuruszy - Turcja - 1923 + 89",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-100-kuruszy-Turcja-1923-89/3404",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3397",
+    "name": "Złota moneta - 20 lirów - Sardynia - 1834",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-20-lirow-Sardynia-1834/3397",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3398",
+    "name": "Złota moneta - 20 lirów - Włochy - 1863",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-20-lirow-Wlochy-1863/3398",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3378",
+    "name": "Złota moneta - 5 koron - Szwecja - 1886",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-koron-Szwecja-1886/3378",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3401",
+    "name": "Złota moneta - 5 peso - Argentyna - 1887",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-peso-Argentyna-1887/3401",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3402",
+    "name": "Złota moneta - 5 peso - Argentyna - 1888",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-peso-Argentyna-1888/3402",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "2895",
+    "name": "10 zł - Bolesław Chrobry - 1925",
+    "link": "https://numizmatyczny.com/pl/p/10-zl-Boleslaw-Chrobry-1925-/2895",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3408",
+    "name": "Złota moneta - 1 suweren - RPA - 1926",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-1-suweren-RPA-1926/3408",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3299",
+    "name": "Złota moneta - 10 guldenów - Holandia - 1913",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-10-guldenow-Holandia-1913/3299",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3612",
+    "name": "Złota moneta - 15 rubli - Rosja - 1897",
+    "link": "https://numizmatyczny.com/15rulbi-1897-rosja",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3613",
+    "name": "Złota moneta - 15 rubli - Rosja - 1897",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-15-rubli-Rosja-1897/3613",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3410",
+    "name": "Złota moneta - 5 rubli - Rosja - 1898",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1898/3410",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3411",
+    "name": "Złota moneta - 5 rubli - Rosja - 1898",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1898/3411",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3412",
+    "name": "Złota moneta - 5 rubli - Rosja - 1898",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1898/3412",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3609",
+    "name": "Złota moneta - 5 rubli - Rosja - 1899",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1899/3609",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3610",
+    "name": "Złota moneta - 5 rubli - Rosja - 1899",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1899-/3610",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3611",
+    "name": "Złota moneta - 5 rubli - Rosja - 1899",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1899/3611",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "3605",
+    "name": "Złota moneta - 7,5 rubla - Rosja - 1897",
+    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-7%2C5-rubla-Rosja-1897/3605",
+    "category_name": "Złote Monety Historyczne"
+  },
+  {
+    "id": "2962",
+    "name": "Polskie banknoty obiegowe - banknot o nominale 50 zł",
+    "link": "https://numizmatyczny.com/polskie-banknoty-obiegowe-banknot-o-nominale-50-zl",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2965",
+    "name": "Złota Moneta 500 zł - Tysiąclecie koronacji Bolesława Chrobrego",
+    "link": "https://numizmatyczny.com/zlota-moneta-500-zl-tysiaclecie-koronacji-boleslawa-chrobrego",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2691",
+    "name": "Polskie banknoty obiegowe – banknot o nominale 20 zł",
+    "link": "https://numizmatyczny.com/polskie-banonoty-obiegowe-banknot-o-nominale-20zlotych",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2566",
+    "name": "Polskie banknoty obiegowe – banknot o nominale 10 zł",
+    "link": "https://numizmatyczny.com/polskie-banonoty-obiegowe-banknot-o-nominale-10zlotych",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1704",
+    "name": "Złota Moneta 500 zł 100. rocznica urodzin Świętego Jana Pawła II",
+    "link": "https://numizmatyczny.com/zlota-klipa-jan-pawel-II-100lat-urodzin",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1006",
+    "name": "Złota Moneta 1 zł 2018 rok - 100 Lecie Odzyskania Niepodległości",
+    "link": "https://numizmatyczny.com/1-zloty-niepodleglosc-2018",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1680",
+    "name": "Złota Moneta 100 zł 10. rocznica tragedii smoleńskiej",
+    "link": "https://numizmatyczny.com/10-rocznica-tragedi-smolenskiej-zloto",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1095",
+    "name": "100 Lat złotego  - Złoty Zestaw",
+    "link": "https://numizmatyczny.com/100-lat-zlotego-zloty-zestaw",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1303",
+    "name": "Złota Moneta 100 zł Józef Piłsudski",
+    "link": "https://numizmatyczny.com/100-zlotych-jozef-pilsudski",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "3490",
+    "name": "Złota Moneta 100 zł Mistrzostwa Euro 2012",
+    "link": "https://numizmatyczny.com/100zlotych-mistrzostswa-euro-2012",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1160",
+    "name": "Złota Moneta 200 zł Polska Reprezentacja Londyn 2012",
+    "link": "https://numizmatyczny.com/zlota-moneta-200zl-londyn-2012",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2823",
+    "name": "Złota Moneta 500 zł Mistrzostwa EURO 2012",
+    "link": "https://numizmatyczny.com/500zl-zlota-moneta-euro-1012",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2147",
+    "name": "Złota Moneta 100 zł Para Prezydencka - Smoleńsk 2011",
+    "link": "https://numizmatyczny.com/moneta-100zl-para-prezydencka",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "1175",
+    "name": "Złota Moneta 100 zł Jan Paweł II 2005",
+    "link": "https://numizmatyczny.com/zlota-moneta-100zl-papiez-jpII-2005",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  }
+]

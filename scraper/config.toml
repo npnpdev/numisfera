@@ -4,9 +4,39 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 request_delay = 1
 timeout = 10
 encoding = "utf-8"
+max_products_total = 50
+max_images_per_product = 2
+
+[selectors.categories]
+menu_root = "#hcategory_0"
+ul_template = "ul.level{level}"
+category_link = "h3 > a"
+parent_class = "parent"
+submenu_template = "div.submenu.level{level} > ul.level{level}"
+
+[page_locators]
+products_container = "div.products"
+product_item = "div.product"
+
+[product_locators]
+id_attribute = "data-product-id"
+name = "a.prodname > span.productname"
+link = "a.prodname"
+image = "a.prodimage img"
+price = "div.price > em"
+description = "div.product-short-description > p"
+producer = "div.manufacturer > a.brand"
+
+[product_details_locators]
+price = "div.price em.main-price"
+description = "div#box_description div.resetcss[itemprop='description']"
+high_res_photos = "div.smallgallery a.gallery"
+attributes_table_rows = "div#box_productdata table tr"
+attribute_key = "td.name"
+attribute_value = "td.value"
 
 [output]
 results_dir = "results"
 categories_file = "categories.json"
 products_file = "products.json"
-images_dir = "images"
+products_detailed_file = "products_detailed.json"
