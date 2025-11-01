@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # Globalne
 CONFIG_FILE = 'config.toml'
-DEFAULT_PARENT_CATEGORY_ID = 2
+DEFAULT_PARENT_CATEGORY_ID = 15
 DEFAULT_LANGUAGE_ID = '1'
 PRESTASHOP_NAMESPACE = 'http://www.w3.org/1999/xlink'
 API_SUCCESS_CODES = (200, 201)
@@ -42,14 +42,19 @@ class XMLBuilder:
         
         prod = ET.SubElement(root, 'product')
         
+        ET.SubElement(prod, 'id_tax_rules_group').text = '1'
         ET.SubElement(prod, 'id_manufacturer').text = '1'
         ET.SubElement(prod, 'id_supplier').text = '1'
         ET.SubElement(prod, 'reference').text = sku
         ET.SubElement(prod, 'price').text = str(price)
-        ET.SubElement(prod, 'id_tax_rules_group').text = '1'
         ET.SubElement(prod, 'type').text = 'simple'
         ET.SubElement(prod, 'id_shop_default').text = '1'
         ET.SubElement(prod, 'active').text = '1'
+        ET.SubElement(prod, 'available_for_order').text = '1'
+        ET.SubElement(prod, 'show_price').text = '1'
+        ET.SubElement(prod, 'state').text = '1'           
+        ET.SubElement(prod, 'pack_stock_type').text = '3' 
+        ET.SubElement(prod, 'id_category_default').text = str(category_id)
         
         name_elem = ET.SubElement(prod, 'name')
         lang = ET.SubElement(name_elem, 'language', id='1')

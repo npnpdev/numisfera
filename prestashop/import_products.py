@@ -3,7 +3,8 @@ import tomllib
 from pathlib import Path
 from typing import List, Dict
 import random
-
+import html
+import xml.etree.ElementTree as ET
 from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE
 from image_downloader import ImageDownloader
 
@@ -41,7 +42,6 @@ class ProductImporter:
             return
         
         try:
-            import xml.etree.ElementTree as ET
             root = ET.fromstring(response.content)
             
             for cat_elem in root.iter('category'):
@@ -65,7 +65,7 @@ class ProductImporter:
             self.build_category_map()
             products = self.load_json(self.config['files']['products_file'])
             
-            # Ogranicz do limitu
+            # Ograniczamy do limitu
             limit = self.config['import'].get('products_limit', len(products))
             products = products[:limit]
             
@@ -78,11 +78,8 @@ class ProductImporter:
         except Exception as e:
             print(f"ERROR: Import produktów - {e}")
 
-    def _import_product(self, product: Dict) -> None:
-        """Importuje pojedynczy produkt"""
-        import html
-        import xml.etree.ElementTree as ET
-        
+    """Importuje pojedynczy produkt"""
+    def _import_product(self, product: Dict) -> None:        
         product_name = product['name']
         product_id = product['id']
         price = product['price']
@@ -90,7 +87,7 @@ class ProductImporter:
         description = product['description']
         images = product.get('images', [])
         
-        # Szukaj ID kategorii
+        # Szukamy ID kategorii
         category_id = None
         for cat_id, cat_name in self.category_map.items():
             if cat_name == category_name:
@@ -101,23 +98,22 @@ class ProductImporter:
             print(f"ERROR: Nie znaleziono kategorii '{category_name}'")
             return
         
-        # Wyczyść HTML entities
+        # Czyścimy HTML z opisu
         clean_description = html.unescape(description)
         
+        # Pobieramy i zapisujemy obrazy lokalnie
         local_images = self.image_downloader.download_product_images(product_id, images)
+        # Losowa ilość na magazynie
         quantity = random.randint(1, 10)
         
-        # Buduj XML
-        xml_elem = XMLBuilder.product(product_name, clean_description, price, product_id, 
-                                    category_id, quantity)
+        # Budujemy XML
+        xml_elem = XMLBuilder.product(product_name, clean_description, price, product_id, category_id)
         
-        # Konwertuj na string i oddział escape'owanie
+        # Konwertujemy
         xml_string = ET.tostring(xml_elem, encoding='unicode')
         xml_string = xml_string.replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"')
         xml_bytes = xml_string.encode('utf-8')
-        
-        print(f"DEBUG: {xml_bytes[:300]}")
-        
+                
         response = self.api_client.post_product(xml_bytes)
     
         if response.status_code in API_SUCCESS_CODES:
@@ -125,40 +121,8 @@ class ProductImporter:
             print(f"INFO: '{product_name}' (ID: {prod_id})")
         else:
             print(f"ERROR: '{product_name}' - {response.status_code}")
-            print(f"RESPONSE: {response.text[:500]}")  # DODAJ TO TUTAJ!
-
-    def test_simple_product(self) -> None:
-        xml_string = '''<?xml version="1.0" encoding="UTF-8"?>
-        <prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
-        <product>
-            <id_tax_rules_group>0</id_tax_rules_group>
-            <type>simple</type>
-            <id_category_default>2</id_category_default>
-            <price>10.00</price>
-            <active>1</active>
-            <name>
-                <language id="1">Testowy produkt API</language>
-            </name>
-            <description>
-                <language id="1">Pełny opis testowy</language>
-            </description>
-            <description_short>
-                <language id="1">Krótki opis testowy</language>
-            </description_short>
-        </product>
-        </prestashop>'''
-
-        print("=== XML wysyłany do API ===")
-        print(xml_string)
-        
-        xml_bytes = xml_string.encode('utf-8')
-        response = self.api_client.post_product(xml_bytes)
-        
-        print(f"Status: {response.status_code}")
-        print(f"Odpowiedź: {response.text[:1000]}")
+            print(f"RESPONSE: {response.text[:500]}")  
 
 if __name__ == "__main__":
     importer = ProductImporter()
-    # importer.import_products()
-    importer.build_category_map()
-    importer.test_simple_product()  # TEST!
+    importer.import_products()

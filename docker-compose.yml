@@ -17,7 +17,7 @@ services:
       - prestashop_network
 
   prestashop:
-    image: prestashop/prestashop:1.7.8
+    image: prestashop/prestashop:1.7.8.11
     container_name: prestashop_app
     depends_on:
       - db
