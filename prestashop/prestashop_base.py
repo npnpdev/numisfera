@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # Globalne
 CONFIG_FILE = 'config.toml'
-DEFAULT_PARENT_CATEGORY_ID = 15
+DEFAULT_PARENT_CATEGORY_ID = 2
 DEFAULT_LANGUAGE_ID = '1'
 PRESTASHOP_NAMESPACE = 'http://www.w3.org/1999/xlink'
 API_SUCCESS_CODES = (200, 201)

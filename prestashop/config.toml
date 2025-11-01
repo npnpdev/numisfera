@@ -1,6 +1,6 @@
 [prestashop]
 api_url = "http://localhost:8080/api"
-api_key = "EXBWVFN97N1TL74UF5B9Q4XFF21W1RVC"
+api_key = "W97KEPVTXNLY2E5XAI18GRVU7DAN7Z59"
 admin_url = "http://localhost:8080/admin_folder"
 
 [import]
