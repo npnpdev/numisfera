@@ -67,3 +67,20 @@ Desktop.ini
 .directory
 .env.local
 .env.*.local
+
+# =====================================================
+# YAML CACHE - regeneruje się automatycznie
+# =====================================================
+prestashop_base/admin-dev/yaml/
+prestashop_base/admin/yaml/
+
+# =====================================================
+# TEMP PLIKI - nie potrzebne w repo
+# =====================================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+prestashop_base/yaml/
+prestashop_base/var/logs/

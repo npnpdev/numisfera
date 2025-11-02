@@ -1,0 +1,198 @@
+.contactFormContent{
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 300px;
+  position: relative;
+}
+.contactFormContent .content_form{
+  margin: 0 auto;
+  display: inline-block;
+  text-align: left;
+}
+.title_column_form{
+  font-size: 21px;
+  padding: 10px 10px 15px 10px;
+  line-height: 22px;
+  font-weight: bold;
+  font-family: Lato;
+}
+.block_description_front,
+.block_contact_form_front,
+.block_image_front,
+.block_maps_front{
+  text-align: center;
+  float: left;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  padding: 5px 15px;
+}
+.block_image_front .cont_column_form img{
+  max-width: 100%;
+  max-height: 100%;
+}
+.contactFormContent .label_field_name{
+  font-size: 16px;
+  width: 100%;
+  padding: 10px 5px 5px 5px;
+  display: block;
+  font-family: Lato;
+}
+.contactFormContent .one_field_form{
+  margin: 10px 0px 10px 0px;
+}
+.contactFormContent .one_field_line input,
+.contactFormContent .one_field_line textarea{
+  width: 100%;
+  height: 42px;
+  outline: none;
+  border: 1px solid #dadada;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 3px;
+  background-color: #ffffff;
+}
+.contactFormContent .one_field_form textarea{
+  height: 90px;
+}
+.contactFormContent .block_contact_form_front .content_form{
+  width: 100%;
+  max-width: 500px;
+}
+.captch_img_block_contact img{
+  border-radius: 3px;
+}
+.captch_img_block_contact{
+  float: left;
+  border: 1px solid #dadada;
+  width: 152px;
+  background-color: #EDEDED;
+  border-radius: 3px;
+  text-align: center;
+}
+.block_result_captcha{
+  float: left;
+}
+.block_result_captcha{
+  width: 150px;
+  margin-left: 19px;
+}
+.one_field_form_captcha, .one_field_form_button{
+  padding-top: 15px;
+}
+.contactFormContent .one_field_form sup{
+  top: -2px;
+  margin-left: 3px;
+  color: red;
+}
+.one_field_form_button{
+  text-align: center;
+}
+.send_contact_form_message{
+  padding: 10px 35px;
+  font-size: 16px;
+  outline: none;
+
+}
+.block_image_front .cont_column_form, .block_description_front .cont_column_form{
+  margin-top: 20px;
+}
+.block_image_front .cont_column_form{
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .block_description_front,
+  .block_contact_form_front,
+  .block_image_front,
+  .block_maps_front{
+    width: 100% !important;
+  }
+}
+.form_notice_contact_form_ov{
+  position: fixed;
+  width: 100%;
+  left: 0;
+  height: 100%;
+  background-color: #000000;
+  top: 0;
+  opacity: 0.2;
+  z-index: 112;
+}
+.form_notice_contact_form{
+  position: absolute;
+  left: 50%;
+  margin-left: -290px;
+  padding: 40px;
+  font-size: 24px;
+  text-align: center;
+  line-height: 31px;
+  border-radius: 4px;
+  width: 580px;
+  top: 100px;
+  -webkit-box-shadow: 0px 1px 20px -7px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 1px 20px -7px rgba(0,0,0,0.5);
+  box-shadow: 0px 1px 20px -7px rgba(0,0,0,0.5);
+  z-index: 113;
+}
+
+.form_notice_contact_form_ov, .form_notice_contact_form_hidden, .notice_success, .notice_error{
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .form_notice_contact_form{
+    margin-left: -225px;
+    width: 450px;
+  }
+}
+
+@media (max-width: 570px) {
+  .form_notice_contact_form{
+    margin-left: -45%;
+    width: 90%;
+  }
+}
+.one_field_form_attach .buttonText{
+  font-size: 14px;
+}
+.material-icons-phone{
+  border: 2px solid #d19e65;
+  border-radius: 50%;
+  padding: 3px 4px 6px 4px;
+}
+
+.block_description_front .cont_column_form .material-icons-phone .material-icons{
+  font-size: 25px !important;
+}
+
+.one_field_form_attach input[type=text].form-control {
+  height: 100%;
+}
+
+@media (max-width: 450px) {
+  .block_description_front, .block_contact_form_front, .block_image_front, .block_maps_front{
+    padding: 0px !important;
+  }
+  .send_contact_form_message{
+    padding: 10px 5px;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 350px) {
+  .block_description_front, .block_contact_form_front, .block_image_front, .block_maps_front{
+    padding: 0px !important;
+  }
+}
+
+.button_line{
+  display: block;
+  width: 100%;
+  height: 10px;
+}
+.contactFormContent i{
+  color: #d19e65;
+  font-size: 40px;
+}

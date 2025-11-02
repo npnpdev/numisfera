@@ -2,7 +2,7 @@
 <module>
     <name>ps_themecusto</name>
     <displayName><![CDATA[Theme Customization]]></displayName>
-    <version><![CDATA[1.2.3]]></version>
+    <version><![CDATA[1.2.5]]></version>
     <description><![CDATA[Easily build your homepage: access the main front office modules and quickly configure them. Feature available on Design &gt; Theme &amp; Logo page.]]></description>
     <author><![CDATA[PrestaShop]]></author>
     <tab><![CDATA[front_office_features]]></tab>
