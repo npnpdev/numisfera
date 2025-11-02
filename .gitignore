@@ -23,6 +23,7 @@ prestashop_base/install/
 prestashop_base/admin-dev/backups/*
 prestashop_base/admin*/backups/*
 *.sql
+!prestashop_base/prestashop_init.sql
 *.dump
 
 # Vendor (composer install będzie przy docker up)
