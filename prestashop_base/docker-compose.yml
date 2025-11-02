@@ -12,6 +12,7 @@ services:
       - "3306"
     volumes:
       - db-data:/var/lib/mysql
+      - ./prestashop_init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     environment:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
