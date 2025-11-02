@@ -10,8 +10,9 @@ W jaki sposób odpalamy repozytorium?
 1. git clone -b 'AKTUALNY BRANCH (ww.)' git@github.com:npnpdev/numisfera.git
 2. cd prestashop_base 
 
-ZANIM ODPALISZ DOCKERA:
-git checkout -- modules/ - To polecenie jest niezbędne, żeby zmienione zdjęcia prawidłowo się wyświetlały, przy odpaleniu dockera prestashop próbuje siebie nadpisać.
+ZANIM ODPALISZ DOCKERA I !PO ODPALENIU SKLEPU!:
+git checkout -- modules/ - To polecenie jest niezbędne, żeby zmienione zdjęcia prawidłowo się wyświetlały, przy odpaleniu dockera prestashop próbuje siebie nadpisać. ODPALAJ TO
+Z FOLDERU POZIOMU prestashop_base.
 
 Na tym etapie odpalamy nasz obraz dockerowy:
 docker compose up
