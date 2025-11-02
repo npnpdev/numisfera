@@ -1,0 +1,5 @@
+config_*.xml
+node_modules/
+translations/
+vendor/
+.php_cs.cache

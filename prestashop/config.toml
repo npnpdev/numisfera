@@ -1,7 +1,7 @@
 [prestashop]
-api_url = "http://localhost:8080/api"
-api_key = "W97KEPVTXNLY2E5XAI18GRVU7DAN7Z59"
-admin_url = "http://localhost:8080/admin_folder"
+api_url = "http://localhost:8001/api"
+api_key = "GTYHUHLX1C1V1E1DI6YMVZMGZG4UJS9Y"
+admin_url = "http://localhost:8001/admin-dev"
 
 [import]
 products_limit = 5
