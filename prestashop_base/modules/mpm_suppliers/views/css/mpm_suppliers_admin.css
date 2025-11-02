@@ -1,0 +1,13 @@
+.block_data_settings .col-lg-offset-3 {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 15px;
+  margin-left: 0 !important;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dadada;
+  margin-bottom: 20px;
+}
+.input_number{
+  width: 160px !important;
+}
+

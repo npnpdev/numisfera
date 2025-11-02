@@ -1,0 +1,33 @@
+{
+  "type": "prestashop-module",
+  "name": "prestashop/ps_faviconnotificationbo",
+  "description": "PrestaShop - Favicon notification BO",
+  "homepage": "https://github.com/PrestaShop/ps_faviconnotificationbo",
+  "license": "AFL-3.0",
+  "authors": [
+    {
+      "name": "PrestaShop SA",
+      "email": "contact@prestashop.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "prestashop/php-dev-tools": "^3.4"
+  },
+  "config": {
+    "platform": {
+      "php": "5.6.0"
+    },
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "prepend-autoloader": false
+  },
+  "autoload": {
+    "classmap": [
+      "controllers",
+      "ps_faviconnotificationbo.php"
+    ]
+  }
+}

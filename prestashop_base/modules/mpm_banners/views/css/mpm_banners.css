@@ -1,0 +1,12 @@
+.block_banners{
+  width: 100%;
+  float: left;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.banners_right_column,
+.banners_left_column{
+  float: left;
+  min-height: 100px;
+  padding: 20px;
+}

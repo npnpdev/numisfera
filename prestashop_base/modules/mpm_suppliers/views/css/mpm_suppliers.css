@@ -1,0 +1,35 @@
+.title_supplier_block {
+  padding: 5px 0px 15px 0px;
+  text-align: center;
+  font-size: 24px;
+  text-align: center;
+}
+.container_supplier{
+  width: 100%;
+  float: left;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.supplier-list-homepage .supplier-item{
+  float: left;
+  padding: 10px;
+  text-align: center;
+}
+.container_supplier img{
+  margin: 0 auto;
+}
+.container_supplier{
+  padding: 0px 100px;
+}
+
+.supplier-item .title{
+  color: #444445;
+  font-family: Lato;
+  font-size: 16px;
+  text-transform: uppercase;
+  display: block;
+  padding-top: 5px;
+}
+.supplier-item .title:hover{
+  color: #d19e65;
+}

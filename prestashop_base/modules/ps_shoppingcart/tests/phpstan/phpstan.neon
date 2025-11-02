@@ -1,0 +1,14 @@
+includes:
+	- %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+  paths:
+    # From PHPStan 0.12, paths to check are relative to the neon file
+    - ../../ps_shoppingcart.php
+    - ../../controllers/
+    - ../../translations/
+    - ../../upgrade/
+  ignoreErrors:
+    - '#Call to an undefined method Module::renderModal\(\).#'
+    - '#Call to an undefined method Module::renderWidget\(\).#'
+  level: 5

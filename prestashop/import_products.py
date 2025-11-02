@@ -1,88 +1,24 @@
 import json
-import requests
 import tomllib
 from pathlib import Path
-from requests.auth import HTTPBasicAuth
+from typing import List, Dict
+import random
+import html
 import xml.etree.ElementTree as ET
-from typing import Optional, List, Dict
+from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE
+from image_downloader import ImageDownloader
 
-# Konfiguracja
-CONFIG_FILE = 'config.toml'
-DEFAULT_LANGUAGE_ID = '1' # Język polski
-DEFAULT_PARENT_CATEGORY_ID = 2 # Kategoria główna domyślna w PrestaShop - "Strona główna"
-PRESTASHOP_NAMESPACE = 'http://www.w3.org/1999/xlink'
-API_SUCCESS_CODES = (200, 201) 
-API_TIMEOUT = 30 # Jeżeli API nie odpowiada w tym czasie, przerywamy
-
-"""Buduje XML'a dla PrestaShopa"""
-class XMLBuilder:
-    """Buduje XML kategorii"""
-    @staticmethod 
-    def category(name: str, link_rewrite: str, parent_id: int) -> ET.Element:
-        root = ET.Element('prestashop')
-        root.set('xmlns:xlink', PRESTASHOP_NAMESPACE)
-        
-        cat = ET.SubElement(root, 'category')
-        
-        # Nazwa kategorii
-        name_elem = ET.SubElement(cat, 'name')
-        lang = ET.SubElement(name_elem, 'language', id=DEFAULT_LANGUAGE_ID)
-        lang.text = name
-        
-        # Ustawienie prawidłowego linku
-        link_elem = ET.SubElement(cat, 'link_rewrite')
-        lang2 = ET.SubElement(link_elem, 'language', id=DEFAULT_LANGUAGE_ID)
-        lang2.text = link_rewrite
-        
-        # Ustawiamy kategorie jako aktywną i przypisujemy rodzica
-        ET.SubElement(cat, 'active').text = '1'
-        ET.SubElement(cat, 'id_parent').text = str(parent_id)
-        
-        return root
-    
-    """Konwertuje XML na tekst bajtowy wymagany przez prestashop API"""
-    @staticmethod
-    def to_bytes(element: ET.Element) -> bytes:
-        return ET.tostring(element, encoding='utf-8')
-
-"""Komunikacja z PrestaShop API"""
-class APIClient:
-    def __init__(self, api_url: str, api_key: str):
-        self.api_url = api_url
-        self.api_key = api_key
-        self.session = requests.Session()
-    
-    """Wysyła kategorię do API"""
-    def post_category(self, xml_payload: bytes) -> requests.Response:
-        return self.session.post(
-            f"{self.api_url}/categories",
-            data=xml_payload,
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )
-    
-    """Wyciąga ID kategorii z odpowiedzi"""
-    def parse_response(self, response: requests.Response) -> Optional[str]:
-        try:
-            root = ET.fromstring(response.content)
-            cat_elem = root.find('category')
-            if cat_elem is not None:
-                id_elem = cat_elem.find('id')
-                return id_elem.text if id_elem is not None else None
-        except Exception as e:
-            print(f"ERROR: Parsowanie odpowiedzi - {e}")
-        return None
-
-"""Importer kategorii do PrestaShopa"""
-class PrestashopImporter:
+"""Importer produktów do PrestaShopa"""
+class ProductImporter:
     def __init__(self, config_file: str = CONFIG_FILE):
         self.config = self._load_config(config_file)
         self.api_client = APIClient(
             self.config['prestashop']['api_url'],
             self.config['prestashop']['api_key']
         )
+        self.image_downloader = ImageDownloader()
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
+        self.category_map = {}
     
     """Wczytuje config TOML"""
     @staticmethod
@@ -96,44 +32,97 @@ class PrestashopImporter:
         with open(self.results_dir / filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     
-    """Importuje całe drzewo kategorii - główna funkcja"""
-    def import_categories(self) -> None:
-        print("ETAP 1: Import kategorii i podkategorii poprzez REST API...")
+    """Buduje mapę z załadowanych kategorii JSON"""
+    def build_category_map(self) -> None:
+        """Pobiera WSZYSTKIE kategorie z API - z pełną ścieżką"""
+        print("INFO: Pobieranie wszystkich kategorii z API...")
+        response = self.api_client.get_all_categories()
+        if response.status_code != 200:
+            print(f"ERROR: API kategorii - {response.status_code}")
+            return
+        
         try:
-            categories = self.load_json(self.config['files']['categories_file'])
-            self._import_tree(categories, parent_id=DEFAULT_PARENT_CATEGORY_ID, level=0)
-            print("OK: Dodano kategorie")
+            root = ET.fromstring(response.content)
+            
+            for cat_elem in root.iter('category'):
+                cat_id = cat_elem.get('id')
+                if cat_id:
+                    detail_response = self.api_client.get_category(int(cat_id))
+                    if detail_response.status_code == 200:
+                        cat_id_str, cat_name = self.api_client.parse_category_detail(detail_response)
+                        if cat_name and cat_id_str:
+                            # Klucz: ID (unikatowe)
+                            self.category_map[int(cat_id_str)] = cat_name
+            
+            print(f"OK: Załadowano {len(self.category_map)} kategorii")
         except Exception as e:
-            print(f"ERROR: Import kategorii - {e}")
-    
-    """Rekurencyjnie importuje kategorie i podkategorie - funkcja pomocnicza"""
-    def _import_tree(self, categories: List[Dict], parent_id: int, level: int) -> None:
-        for cat in categories:
-            cat_name = cat['name']
-            link_rewrite = self._slugify(cat_name)
-            indent = "  " * level
+            print(f"ERROR: Budowanie mapy kategorii - {e}")
+
+    """Importuje produkty - główna funkcja"""
+    def import_products(self) -> None:
+        print("ETAP 2: Import produktów poprzez REST API...")
+        try:
+            self.build_category_map()
+            products = self.load_json(self.config['files']['products_file'])
             
-            # Budujemy XML i wysyłamy do API
-            xml_elem = XMLBuilder.category(cat_name, link_rewrite, parent_id)
-            xml_bytes = XMLBuilder.to_bytes(xml_elem)
-            response = self.api_client.post_category(xml_bytes)
+            # Ograniczamy do limitu
+            limit = self.config['import'].get('products_limit', len(products))
+            products = products[:limit]
             
-            # Sprawdzamy odpowiedź
-            if response.status_code in API_SUCCESS_CODES:
-                cat_id = self.api_client.parse_response(response)
-                print(f"INFO: {indent}'{cat_name}' (ID: {cat_id})")
+            for idx, product in enumerate(products):
+                self._import_product(product)
+                if (idx + 1) % 100 == 0:
+                    print(f"INFO: Przetworzono {idx + 1} produktów...")
+            
+            print(f"OK: Dodano {len(products)} produktów")
+        except Exception as e:
+            print(f"ERROR: Import produktów - {e}")
+
+    """Importuje pojedynczy produkt"""
+    def _import_product(self, product: Dict) -> None:        
+        product_name = product['name']
+        product_id = product['id']
+        price = product['price']
+        category_name = product['category_name']
+        description = product['description']
+        images = product.get('images', [])
+        
+        # Szukamy ID kategorii
+        category_id = None
+        for cat_id, cat_name in self.category_map.items():
+            if cat_name == category_name:
+                category_id = cat_id
+                break
+        
+        if not category_id:
+            print(f"ERROR: Nie znaleziono kategorii '{category_name}'")
+            return
+        
+        # Czyścimy HTML z opisu
+        clean_description = html.unescape(description)
+        
+        # Pobieramy i zapisujemy obrazy lokalnie
+        local_images = self.image_downloader.download_product_images(product_id, images)
+        # Losowa ilość na magazynie
+        quantity = random.randint(1, 10)
+        
+        # Budujemy XML
+        xml_elem = XMLBuilder.product(product_name, clean_description, price, product_id, category_id)
+        
+        # Konwertujemy
+        xml_string = ET.tostring(xml_elem, encoding='unicode')
+        xml_string = xml_string.replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"')
+        xml_bytes = xml_string.encode('utf-8')
                 
-                # Importujemy dzieci
-                if cat.get('children') and cat_id:
-                    self._import_tree(cat['children'], parent_id=int(cat_id), level=level+1)
-            else:
-                print(f"ERROR: '{cat_name}' - {response.status_code}")
+        response = self.api_client.post_product(xml_bytes)
     
-    """Konwerujemy nazwę kategorii na przyjazny link"""
-    @staticmethod
-    def _slugify(text: str) -> str:
-        return text.lower().replace(' ', '-').replace('/', '-')
+        if response.status_code in API_SUCCESS_CODES:
+            prod_id = self.api_client.parse_response(response)
+            print(f"INFO: '{product_name}' (ID: {prod_id})")
+        else:
+            print(f"ERROR: '{product_name}' - {response.status_code}")
+            print(f"RESPONSE: {response.text[:500]}")  
 
 if __name__ == "__main__":
-    importer = PrestashopImporter()
-    importer.import_categories()
+    importer = ProductImporter()
+    importer.import_products()

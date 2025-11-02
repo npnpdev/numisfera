@@ -1,0 +1,15 @@
+#subtab-AdminMpmSolutions:before{
+  content: '\e87b';
+  font-family: Material Icons;
+  background-size: contain;
+  display: block;
+  position: absolute;
+  left: -30px;
+  top: 1px;
+  color: #FFF;
+  font-size: 16px;
+}
+
+#subtab-AdminMpmSolutions{
+  position: relative;
+}
