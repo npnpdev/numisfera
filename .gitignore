@@ -10,10 +10,10 @@ prestashop_base/upload/
 prestashop_base/img/tmp/
 
 # Hasła i konfiguracja z danymi
-prestashop_base/config/settings.inc.php
+#prestashop_base/config/settings.inc.php
 prestashop_base/config/settings.old.php
-prestashop_base/app/config/parameters.yml
-prestashop_base/app/config/parameters.php
+#prestashop_base/app/config/parameters.yml
+#prestashop_base/app/config/parameters.php
 
 # Install folder
 prestashop_base/install-dev/
