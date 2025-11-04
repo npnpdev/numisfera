@@ -2,11 +2,9 @@ import json
 import tomllib
 from pathlib import Path
 from typing import List, Dict
-import random
-import html
 import xml.etree.ElementTree as ET
 from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE
-from image_downloader import ImageDownloader
+from import_images import process_product_images
 
 """Importer produktów do PrestaShopa"""
 class ProductImporter:
@@ -16,7 +14,6 @@ class ProductImporter:
             self.config['prestashop']['api_url'],
             self.config['prestashop']['api_key']
         )
-        self.image_downloader = ImageDownloader()
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
         self.category_map = {}
     
@@ -32,11 +29,10 @@ class ProductImporter:
         with open(self.results_dir / filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     
-    """Buduje mapę z załadowanych kategorii JSON"""
+    """Pobiera wszystkie kategorie z API - z pełną ścieżką"""
     def build_category_map(self) -> None:
-        """Pobiera WSZYSTKIE kategorie z API - z pełną ścieżką"""
         print("INFO: Pobieranie wszystkich kategorii z API...")
-        response = self.api_client.get_all_categories()
+        response = self.api_client.get_all("categories")
         if response.status_code != 200:
             print(f"ERROR: API kategorii - {response.status_code}")
             return
@@ -60,9 +56,15 @@ class ProductImporter:
 
     """Importuje produkty - główna funkcja"""
     def import_products(self) -> None:
-        print("ETAP 2: Import produktów poprzez REST API...")
+        print("INFO: Import produktów poprzez REST API...")
         try:
+            # Budujemy mapę kategorii
             self.build_category_map()
+
+            # Budujemy mapę atrybutów 
+            features_map = self.api_client.get_features_map()
+
+            # Wczytujemy produkty z JSON
             products = self.load_json(self.config['files']['products_file'])
             
             # Ograniczamy do limitu
@@ -70,7 +72,7 @@ class ProductImporter:
             products = products[:limit]
             
             for idx, product in enumerate(products):
-                self._import_product(product)
+                self._import_product(product, features_map)
                 if (idx + 1) % 100 == 0:
                     print(f"INFO: Przetworzono {idx + 1} produktów...")
             
@@ -79,7 +81,7 @@ class ProductImporter:
             print(f"ERROR: Import produktów - {e}")
 
     """Importuje pojedynczy produkt"""
-    def _import_product(self, product: Dict) -> None:        
+    def _import_product(self, product: Dict, features_map: dict) -> None:        
         product_name = product['name']
         product_id = product['id']
         price = product['price']
@@ -97,28 +99,50 @@ class ProductImporter:
         if not category_id:
             print(f"ERROR: Nie znaleziono kategorii '{category_name}'")
             return
-        
-        # Czyścimy HTML z opisu
-        clean_description = html.unescape(description)
-        
-        # Pobieramy i zapisujemy obrazy lokalnie
-        local_images = self.image_downloader.download_product_images(product_id, images)
-        # Losowa ilość na magazynie
-        quantity = random.randint(1, 10)
-        
+
+        # Tworzymy cechy dla produktu
+        feature_values_map = {} 
+        product_attrs = product.get('attributes', {})
+
+        if product_attrs and isinstance(product_attrs, dict):
+            for attr_name, attr_value in product_attrs.items():
+                if attr_name in features_map:
+                    feature_id = features_map[attr_name]
+                    
+                    # Tworzymy konkretną wartość cechy
+                    xml_elem = XMLBuilder.product_feature_value(str(attr_value), feature_id)
+                    xml_bytes = XMLBuilder.to_bytes(xml_elem)
+                    
+                    response = self.api_client.post("product_feature_values", xml_bytes)
+                    
+                    if response.status_code in (200, 201):
+                        fv_id = self.api_client.parse_response(response)
+                        feature_values_map[feature_id] = int(fv_id)
+                        # print(f"OK: {attr_name}={attr_value} (ID: {fv_id})")
+                    elif response.status_code == 409:
+                        print(f"INFO: Cecha już istnieje: {attr_name}={attr_value}")
+                    else:
+                        print(f"BŁĄD: {attr_name}={attr_value} ({response.status_code})")
+        else:
+            print(f"INFO: Brak atrybutów dla produktu ID {product_id}")
+
         # Budujemy XML
-        xml_elem = XMLBuilder.product(product_name, clean_description, price, product_id, category_id)
-        
+        xml_elem = XMLBuilder.product(product_name, description, price, product_id, category_id, feature_values_map)
+
         # Konwertujemy
         xml_string = ET.tostring(xml_elem, encoding='unicode')
-        xml_string = xml_string.replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"')
+
         xml_bytes = xml_string.encode('utf-8')
-                
-        response = self.api_client.post_product(xml_bytes)
+
+        response = self.api_client.post("products", xml_bytes)
     
         if response.status_code in API_SUCCESS_CODES:
             prod_id = self.api_client.parse_response(response)
             print(f"INFO: '{product_name}' (ID: {prod_id})")
+
+            # Pobieramy i dodajemy obrazy
+            if images:
+                process_product_images(prod_id, images, self.config)
         else:
             print(f"ERROR: '{product_name}' - {response.status_code}")
             print(f"RESPONSE: {response.text[:500]}")  

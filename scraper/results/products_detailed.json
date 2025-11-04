@@ -439,12 +439,34 @@
     }
   },
   {
+    "id": "3625",
+    "name": "Sztabka złota - 1 Gram -  Germania Mint",
+    "link": "https://numizmatyczny.com/sztabka-1g-germania-mint-au",
+    "category_name": "Sztabki złota",
+    "price": 569.0,
+    "price_text": "569,00 zł",
+    "description": "<p>Germania Mint Gold Minted Bar 1 g<br/><br/>Prezentujemy nowy produkt inwestycyjno-kolekcjonerski – jednogramową złotą sztabkę Germania Mint Gold Minted Bar 1 g. To esencja luksusu w kompaktowej formie. Każda sztabka została zapakowana w Safepack Germania Mint, gwarantujący nie tylko ochronę, ale także elegancję, która oczaruje nawet najbardziej wymagających kolekcjonerów. Każdy safepack, zawierający Złotą Sztabkę, zabezpieczony został folią chroniącą przed zarysowaniem (folia nie jest integralną częścią produktu, a jedynie dodatkowym zabezpieczeniem)<br/><br/>Oferta obejmuje:<br/><br/>   - Germania Mint Gold Minted Bar 1 g – sztabkę wykonaną ze złota próby 999,9, zapakowaną w minimalistyczny Safepack Germania Mint.<br/><br/><br/><br/>Sztabka wykonana jest ze złota pochodzącego ze źródeł akredytowanych przez LBMA.</p>",
+    "images": [
+      "https://numizmatyczny.com/userdata/public/gfx/16240/Sztabka-zlota---1-gram---Germania-Mint.png",
+      "https://numizmatyczny.com/userdata/public/gfx/16235/Sztabka-zlota---1-gram---Germania-Mint.png"
+    ],
+    "attributes": {
+      "Stan Zachowania Oferowanej Monety": "Stan Menniczy I",
+      "Zdjęcie Oferowanej Monety": "Zdjęcie przykładowe",
+      "Stop": "Au 999",
+      "Dodatkowe uszlachetnienie": "brak",
+      "Waga w gramach": "1,00 g",
+      "Grading": "Nie dotyczy",
+      "Informacje o dodatkach": "Sztabka w oryginalnie zamkniętym opakowaniu typu Certicard"
+    }
+  },
+  {
     "id": "2582",
     "name": "Sztabka Złota 1 Gram - Argor",
     "link": "https://numizmatyczny.com/sztabka-zlota-1gram-argor",
     "category_name": "Sztabki złota",
-    "price": 549.0,
-    "price_text": "549,00 zł",
+    "price": 579.0,
+    "price_text": "579,00 zł",
     "description": "<p>Sztabka złota 1 gram - Złoto Au.999</p>\n<p> </p>",
     "images": [
       "https://numizmatyczny.com/userdata/public/gfx/11608/Sztabka-Zlota-1-Gram---Argor.png",
@@ -1068,8 +1090,8 @@
     "name": "Złota Moneta 500 zł 100. rocznica urodzin Świętego Jana Pawła II",
     "link": "https://numizmatyczny.com/zlota-klipa-jan-pawel-II-100lat-urodzin",
     "category_name": "Złote Monety Kolekcjonerskie",
-    "price": 34500.0,
-    "price_text": "34 500,00 zł",
+    "price": 1.0,
+    "price_text": "1,00 zł",
     "description": "<p>Złota Moneta 500 zł 100. rocznica urodzin Świętego Jana Pawła II</p>",
     "images": [
       "https://numizmatyczny.com/userdata/public/gfx/6739/Zlota-Moneta-500-zl-100.-rocznica-urodzin-Swietego-Jana-Pawla-II.jpg",
@@ -1271,8 +1293,8 @@
     "name": "Złota Moneta 500 zł Mistrzostwa EURO 2012",
     "link": "https://numizmatyczny.com/500zl-zlota-moneta-euro-1012",
     "category_name": "Złote Monety Kolekcjonerskie",
-    "price": 32800.0,
-    "price_text": "32 800,00 zł",
+    "price": 34000.0,
+    "price_text": "34 000,00 zł",
     "description": "<p>Złota Moneta 500 zł Mistrzostwa Europy w Piłce Nożnej - 2012</p>",
     "images": [
       "https://numizmatyczny.com/userdata/public/gfx/12825/Zlota-Moneta-500-zl-Mistrzostwa-EURO-2012.jpg",
@@ -1324,36 +1346,6 @@
       "Grading": "Nie dotyczy",
       "Katalog Fisher": "KZ(100)032",
       "Katalog J. Parchimowicz": "1225",
-      "Informacje o dodatkach": "Moneta w kapslu, Pudełko bankowe, Certyfikat"
-    }
-  },
-  {
-    "id": "1175",
-    "name": "Złota Moneta 100 zł Jan Paweł II 2005",
-    "link": "https://numizmatyczny.com/zlota-moneta-100zl-papiez-jpII-2005",
-    "category_name": "Złote Monety Kolekcjonerskie",
-    "price": 4400.0,
-    "price_text": "4 400,00 zł",
-    "description": "<p>Złota Moneta 100 złotych - Jan Paweł II - 2005 rok</p>",
-    "images": [
-      "https://numizmatyczny.com/userdata/public/gfx/4382/Zlota-Moneta-100-zl-Jan-Pawel-II-2005.jpg",
-      "https://numizmatyczny.com/userdata/public/gfx/4379/Zlota-Moneta-100-zl-Jan-Pawel-II-2005.jpg"
-    ],
-    "attributes": {
-      "Stan Zachowania Oferowanej Monety": "Stan L",
-      "Zdjęcie Oferowanej Monety": "Zdjęcie przykładowe",
-      "Rok Emisji": "2005",
-      "Stempel": "lustrzany",
-      "Nominał": "100 złotych",
-      "Nakład": "18 700",
-      "Stop": "Au 900",
-      "Średnica / Rozmiar": "Ø 21,00 mm",
-      "Dodatkowe uszlachetnienie": "brak",
-      "Waga w gramach": "8,00 g",
-      "Rant": "gładki",
-      "Seria Tematyczna": "Papież Jan Paweł II",
-      "Katalog Fisher": "KZ(100)022",
-      "Katalog J. Parchimowicz": "978",
       "Informacje o dodatkach": "Moneta w kapslu, Pudełko bankowe, Certyfikat"
     }
   }
