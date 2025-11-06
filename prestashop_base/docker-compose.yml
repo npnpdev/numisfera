@@ -33,7 +33,7 @@ services:
       DB_NAME: ${DB_NAME:-prestashop}
       DB_SERVER: ${DB_SERVER:-mysql}
       DB_PREFIX: ${DB_PREFIX:-ps_}
-      PS_DOMAIN: ${PS_DOMAIN:-localhost:8001}
+      PS_DOMAIN: ${PS_DOMAIN:-localhost}
       PS_FOLDER_INSTALL: ${PS_FOLDER_INSTALL:-install-dev}
       PS_FOLDER_ADMIN: ${PS_FOLDER_ADMIN:-admin-dev}
       PS_COUNTRY: ${PS_COUNTRY:-pl}
@@ -42,9 +42,19 @@ services:
       ADMIN_MAIL: ${ADMIN_MAIL:-demo@prestashop.com}
       ADMIN_PASSWD: ${ADMIN_PASSWD:-prestashop_demo}
     command: ["/tmp/wait-for-it.sh", "--timeout=60", "--strict", "mysql:3306", "--", "/tmp/docker_run_git.sh"]
-    ports:
-      - "8001:80"
+    #ports:
+    #  - "8001:80"
     depends_on:
         - mysql
     volumes:
       - ./:/var/www/html/:delegated
+  nginx:
+    image: nginx:1.25-alpine
+    depends_on:
+      - prestashop-git
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    ports:
+      - "443:443"
+    restart: unless-stopped
