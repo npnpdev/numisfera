@@ -1,6 +1,7 @@
 import requests
 from pathlib import Path
 import tomllib
+from PIL import Image
 
 class ImageDownloader:
     def __init__(self, images_dir: Path):
@@ -28,16 +29,39 @@ class ImageDownloader:
                 filename = f"{index}.jpg"
                 filepath = folder / filename
                 
+                # Zapisujemy obraz lokalnie
                 with open(filepath, 'wb') as f:
                     f.write(response.content)
                 
-                # print(f"DEBUG: Pobrano {filename}")
-                return str(filepath)
+                # Sprawdzamy format i konwertujemy do JPEG, jeśli potrzeba
+                try:
+                    img = Image.open(filepath)
+                    
+                    # Jeśli NIE jest JPEG - konwertujemy
+                    if img.format != 'JPEG':
+                        #print(f"DEBUG: Konwertowanie {img.format} → JPEG dla {filename}")
+                        
+                        # Konwertujemy na RGB (JPEG nie obsługuje transparentności)
+                        if img.mode in ('RGBA', 'LA', 'P'):
+                            rgb_img = img.convert('RGB')
+                        else:
+                            rgb_img = img
+                        
+                        # Nadpisujemy jako JPEG
+                        rgb_img.save(filepath, 'JPEG', quality=95)
+                    
+                    return str(filepath)
+                    
+                except Exception as e:
+                    print(f"ERROR: Konwersja obrazu {url} - {e}")
+                    if filepath.exists():
+                        filepath.unlink()
+                    return None
+                    
         except Exception as e:
             print(f"ERROR: Pobieranie {url} - {e}")
         
         return None
-
 
 class ImageUploader:
     def __init__(self, config: dict):

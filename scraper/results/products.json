@@ -48,6 +48,12 @@
     "category_name": "Monety - 1/10 Uncji - 3,1 g"
   },
   {
+    "id": "3626",
+    "name": "Koala - 2024 - 1/10 oz - Złota Moneta",
+    "link": "https://numizmatyczny.com/koala-1-10-uncji-au",
+    "category_name": "Monety - 1/10 Uncji - 3,1 g"
+  },
+  {
     "id": "2396",
     "name": "Britannia 2023 - 1/10 oz - Złota Moneta",
     "link": "https://numizmatyczny.com/britannia-1-10uncji-zlota",
@@ -180,12 +186,6 @@
     "category_name": "Złote Monety Historyczne"
   },
   {
-    "id": "3410",
-    "name": "Złota moneta - 5 rubli - Rosja - 1898",
-    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1898/3410",
-    "category_name": "Złote Monety Historyczne"
-  },
-  {
     "id": "3411",
     "name": "Złota moneta - 5 rubli - Rosja - 1898",
     "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1898/3411",
@@ -201,12 +201,6 @@
     "id": "3609",
     "name": "Złota moneta - 5 rubli - Rosja - 1899",
     "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1899/3609",
-    "category_name": "Złote Monety Historyczne"
-  },
-  {
-    "id": "3610",
-    "name": "Złota moneta - 5 rubli - Rosja - 1899",
-    "link": "https://numizmatyczny.com/pl/p/Zlota-moneta-5-rubli-Rosja-1899-/3610",
     "category_name": "Złote Monety Historyczne"
   },
   {
@@ -237,6 +231,12 @@
     "id": "2691",
     "name": "Polskie banknoty obiegowe – banknot o nominale 20 zł",
     "link": "https://numizmatyczny.com/polskie-banonoty-obiegowe-banknot-o-nominale-20zlotych",
+    "category_name": "Złote Monety Kolekcjonerskie"
+  },
+  {
+    "id": "2555",
+    "name": "Złota Moneta 200 zł 80. rocznica wybuchu powstania w getcie warszawskim",
+    "link": "https://numizmatyczny.com/zlota-moneta-80rocznica-powstania-w-gettcie",
     "category_name": "Złote Monety Kolekcjonerskie"
   },
   {

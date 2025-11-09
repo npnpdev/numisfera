@@ -1,0 +1,97 @@
+/**
+ * PrestaShop module created by VEKIA, a guy from official PrestaShop community ;-)
+ *
+ * @author    VEKIA MILOSZ MYSZCZUK VATEU: PL9730945634
+ * @copyright 2010-2025 VEKIA
+ * @license   This program is not free software and you can't resell and redistribute it
+ *
+ * CONTACT WITH DEVELOPER http://mypresta.eu
+ * support@mypresta.eu
+ */
+ 
+
+/*VERTICAL MENU*/
+#categories_block_left .vertical{
+  position:relative;
+  width:100%;
+  z-index:4;
+}
+
+/* ALL UL */
+#categories_block_left .vertical ul{
+  list-style: none;
+}
+/* ALL LI */
+#categories_block_left .vertical li{
+  position:relative;
+}
+/* ALL A */
+#categories_block_left .vertical a{
+  display:block;
+  color:#000;
+  border-bottom:1px dotted #eee;
+  border-top: 1px dotted #fff;
+  text-decoration:none;
+  padding:10px 15px;
+  background:#f8f8f8;
+  transition:0.2s;
+}
+/* ALL A HOVER */
+
+/* INNER UL HIDE */
+#categories_block_left .vertical ul ul{
+  position:absolute;
+  left:0%;
+  top:0;
+  width:100%;
+  visibility:hidden;
+  opacity:0;
+  transition: transform 0.2s;
+  transform: translateX(50px);
+}
+/* INNER UL SHOW */
+#categories_block_left .vertical li:hover > ul{
+  left:100%;
+  visibility:visible;
+  opacity:1;
+  transform: translateX(0px);
+}
+
+#categories_block_left .vertical li:hover, #categories_block_left .vertical li:hover a:hover {
+  background:#f0f0f0;
+}
+
+#categories_block_left .vertical li:hover li{
+  border-left:1px solid #fff;
+}
+
+#categories_block_left .vertical li:hover ul{
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 13px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 13px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 13px; 
+}
+
+.verticalblockcategories .selected {
+  border: 1px solid #adadad!important;
+  border-bottom: 1px dotted #adadad!important;
+  border-top: 1px dotted #adadad!important;
+  background: #FFF!important;
+}
+
+@media (max-width: 767px)
+{
+  #categories_block_left .vertical li:hover > ul {
+    left: 0%!important;
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0px);
+    z-index: 90!important;
+    top: 43px!important;
+  }
+  #categories_block_left .vertical li a:after{
+    content: 'keyboard_arrow_down';
+    font-family:'Material icons';
+    float:right;
+    font-size:30px
+  }
+}
