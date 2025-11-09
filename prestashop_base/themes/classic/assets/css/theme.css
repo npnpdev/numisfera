@@ -232,3 +232,7 @@ body, html {
 #belka a:nth-child(3) {
   flex: 0 0 150px !important;
 }
+
+#_desktop_user_info div a {
+	margin: 15px;
+}
