@@ -102,6 +102,12 @@
     "category_name": "Polskie monety Inwestycyjne „Bielik”"
   },
   {
+    "id": "3625",
+    "name": "Sztabka złota - 1 Gram -  Germania Mint",
+    "link": "https://numizmatyczny.com/sztabka-1g-germania-mint-au",
+    "category_name": "Sztabki złota"
+  },
+  {
     "id": "2582",
     "name": "Sztabka Złota 1 Gram - Argor",
     "link": "https://numizmatyczny.com/sztabka-zlota-1gram-argor",
@@ -291,12 +297,6 @@
     "id": "2147",
     "name": "Złota Moneta 100 zł Para Prezydencka - Smoleńsk 2011",
     "link": "https://numizmatyczny.com/moneta-100zl-para-prezydencka",
-    "category_name": "Złote Monety Kolekcjonerskie"
-  },
-  {
-    "id": "1175",
-    "name": "Złota Moneta 100 zł Jan Paweł II 2005",
-    "link": "https://numizmatyczny.com/zlota-moneta-100zl-papiez-jpII-2005",
     "category_name": "Złote Monety Kolekcjonerskie"
   }
 ]
