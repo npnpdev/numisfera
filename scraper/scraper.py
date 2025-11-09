@@ -7,7 +7,6 @@ import tomllib
 from pathlib import Path
 from typing import List, Dict, Optional
 
-
 class Config:
     def __init__(self, config_path: str = 'config.toml'):
         script_dir = Path(__file__).parent.resolve()

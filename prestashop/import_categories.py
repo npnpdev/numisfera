@@ -43,11 +43,11 @@ class PrestashopImporter:
             cat_name = cat['name']
             link_rewrite = self._slugify(cat_name)
             indent = "  " * level
-            
+                
             # Budujemy XML i wysyłamy do API
             xml_elem = XMLBuilder.category(cat_name, link_rewrite, parent_id)
             xml_bytes = XMLBuilder.to_bytes(xml_elem)
-            response = self.api_client.post_category(xml_bytes)
+            response = self.api_client.post("categories", xml_bytes)
             
             # Sprawdzamy odpowiedź
             if response.status_code in API_SUCCESS_CODES:

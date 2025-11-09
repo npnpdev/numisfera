@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # Globalne
 CONFIG_FILE = 'config.toml'
-DEFAULT_PARENT_CATEGORY_ID = 2
+DEFAULT_PARENT_CATEGORY_ID = 2 # ID głównej kategorii "Root" w PrestaShop
 DEFAULT_LANGUAGE_ID = '1'
 PRESTASHOP_NAMESPACE = 'http://www.w3.org/1999/xlink'
 API_SUCCESS_CODES = (200, 201)
@@ -36,7 +36,7 @@ class XMLBuilder:
     
     """Buduje XML produktu""" 
     @staticmethod
-    def product(name: str, description: str, price: float, sku: str, category_id: int) -> ET.Element:
+    def product(name: str, description: str, price: float, sku: str, category_id: int, feature_values_ids: list = None) -> ET.Element:
         root = ET.Element('prestashop')
         root.set('xmlns:xlink', PRESTASHOP_NAMESPACE)
         
@@ -62,17 +62,53 @@ class XMLBuilder:
         
         desc_elem = ET.SubElement(prod, 'description')
         lang_desc = ET.SubElement(desc_elem, 'language', id='1')
-        lang_desc.text = description
+        lang_desc.text = f"{description}"
         
-        # DODAJ ASSOCIATIONS!
         assoc = ET.SubElement(prod, 'associations')
         cats = ET.SubElement(assoc, 'categories')
         cat = ET.SubElement(cats, 'category')
         ET.SubElement(cat, 'id').text = str(category_id)
         
+        # Atrybuty produktu
+        if feature_values_ids:
+            fv_assoc = ET.SubElement(assoc, 'product_features')
+            for feature_id, fv_id in feature_values_ids.items(): 
+                fv_elem = ET.SubElement(fv_assoc, 'product_feature')
+                ET.SubElement(fv_elem, 'id').text = str(feature_id)
+                ET.SubElement(fv_elem, 'id_feature_value').text = str(fv_id)
+    
         return root
 
-    """Zamienia XML na bytes"""
+    """Buduje XML dla atrybutu - wykorzystywane przy imporcie cech"""
+    @staticmethod
+    def product_feature(name: str) -> ET.Element:
+        root = ET.Element('prestashop')
+        root.set('xmlns:xlink', PRESTASHOP_NAMESPACE)
+        
+        feat = ET.SubElement(root, 'product_feature')
+        name_elem = ET.SubElement(feat, 'name')
+        lang = ET.SubElement(name_elem, 'language', id=DEFAULT_LANGUAGE_ID)
+        lang.text = name
+        
+        return root
+
+    """Buduje XML dla wartości atrybutu - wykorzystywane przy imporcie produktów"""
+    @staticmethod
+    def product_feature_value(value: str, feature_id: int) -> ET.Element:
+        root = ET.Element('prestashop')
+        root.set('xmlns:xlink', PRESTASHOP_NAMESPACE)
+        
+        fv = ET.SubElement(root, 'product_feature_value')
+        ET.SubElement(fv, 'id_feature').text = str(feature_id)
+        ET.SubElement(fv, 'custom').text = '0'
+        
+        value_elem = ET.SubElement(fv, 'value')
+        lang = ET.SubElement(value_elem, 'language', id=DEFAULT_LANGUAGE_ID)
+        lang.text = value
+        
+        return root
+
+    """Zamienia XML na bajty do wysłania przez API"""
     @staticmethod
     def to_bytes(element: ET.Element) -> bytes:
         return ET.tostring(element, encoding='utf-8')
@@ -83,64 +119,18 @@ class APIClient:
         self.api_url = api_url
         self.api_key = api_key
         self.session = requests.Session()
-    
-    def post_category(self, xml_payload: bytes) -> requests.Response:
-        return self.session.post(
-            f"{self.api_url}/categories",
-            data=xml_payload,
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )
-    
-    def post_product(self, xml_payload: bytes) -> requests.Response:
-        return self.session.post(
-            f"{self.api_url}/products",
-            data=xml_payload,
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )
-    
+
     """Wyciąga ID z odpowiedzi API"""
     def parse_response(self, response: requests.Response) -> Optional[str]:
         try:
             root = ET.fromstring(response.content)
-            elem = root.find('category') or root.find('product')
+            elem = root.find('category') or root.find('product') or root.find('product_feature') or root.find('product_feature_value')
             if elem is not None:
                 id_elem = elem.find('id')
                 return id_elem.text if id_elem is not None else None
         except Exception as e:
             print(f"ERROR: Parsowanie odpowiedzi - {e}")
         return None
-
-    """Pobiera wszystkie kategorie z API"""
-    def get_all_categories(self) -> requests.Response:
-        return self.session.get(
-            f"{self.api_url}/categories",
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )
-    
-    """Parsuje odpowiedź z kategorii i buduje mapę name -> id"""
-    def parse_categories_response(self, response: requests.Response) -> dict:    
-        category_map = {}
-        try:
-            root = ET.fromstring(response.content)
-            print(f"DEBUG: Otrzymano XML: {response.content[:500]}")  
-            for cat_elem in root.findall('category'):
-                id_elem = cat_elem.find('id')
-                name_elem = cat_elem.find('name')
-                if id_elem is not None and name_elem is not None:
-                    lang_elem = name_elem.find('language')
-                    if lang_elem is not None:
-                        cat_id = id_elem.text
-                        cat_name = lang_elem.text
-                        category_map[cat_name] = int(cat_id)
-        except Exception as e:
-            print(f"ERROR: Parsowanie kategorii - {e}")
-        return category_map
 
     """Pobiera szczegóły jednej kategorii"""
     def get_category(self, category_id: int) -> requests.Response:
@@ -167,3 +157,46 @@ class APIClient:
             print(f"ERROR: Parsowanie szczegółów kategorii - {e}")
         return (None, None)
 
+    """Pobiera mapę wszystkich product_features (atrybutów): {nazwa → id}"""
+    def get_features_map(self) -> dict:
+        features_map = {}
+        try:
+            response = self.get_all("product_features")
+            if response.status_code == 200:
+                root = ET.fromstring(response.content)
+                for feat_elem in root.iter('product_feature'):
+                    feat_id = feat_elem.get('id')
+                    if feat_id:
+                        detail_resp = self.session.get(
+                            f"{self.api_url}/product_features/{feat_id}",
+                            headers={'Content-Type': 'application/xml'},
+                            auth=HTTPBasicAuth(self.api_key, ''),
+                            timeout=API_TIMEOUT
+                        )
+                        if detail_resp.status_code == 200:
+                            detail_root = ET.fromstring(detail_resp.content)
+                            name_elem = detail_root.find('.//product_feature/name/language')
+                            if name_elem is not None and name_elem.text:
+                                features_map[name_elem.text] = int(feat_id)
+        except Exception as e:
+            print(f"ERROR: Pobieranie mapy features - {e}")
+        return features_map
+
+    """Wysyła zasób do danego endpointu"""
+    def post(self, endpoint: str, xml_payload: bytes) -> requests.Response:
+        return self.session.post(
+            f"{self.api_url}/{endpoint}",
+            data=xml_payload,
+            headers={'Content-Type': 'application/xml'},
+            auth=HTTPBasicAuth(self.api_key, ''),
+            timeout=API_TIMEOUT
+        )
+
+    """Pobiera wszystkie zasoby z danego endpointu"""
+    def get_all(self, endpoint: str) -> requests.Response:
+        return self.session.get(
+            f"{self.api_url}/{endpoint}",
+            headers={'Content-Type': 'application/xml'},
+            auth=HTTPBasicAuth(self.api_key, ''),
+            timeout=API_TIMEOUT
+        )
