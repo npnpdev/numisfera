@@ -59,3 +59,11 @@ services:
       - "443:443"
       - "80:80"
     restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
