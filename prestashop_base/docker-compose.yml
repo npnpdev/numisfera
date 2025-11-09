@@ -57,4 +57,5 @@ services:
       - ./certs:/etc/nginx/certs:ro
     ports:
       - "443:443"
+      - "80:80"
     restart: unless-stopped
