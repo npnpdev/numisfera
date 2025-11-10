@@ -199,10 +199,20 @@ body, html {
   border-bottom: 1px solid #222;
 }
 
+.header-top{
+    padding-bottom: 0px !important;
+    padding-top: 0px !important;
+    margin-top: 5rem;
+}
+
+.header-nav{
+    border: 0 !important;
+}
+
 #header .header-top a[data-depth="0"] {
     color: #ffffff;
     text-transform: capitalize;
-     border: 1px solid grey;
+    border: 1px solid grey;
 }
 
 .myhtmlblock {
@@ -234,3 +244,177 @@ body, html {
 #_desktop_user_info div a {
 	margin: 6px;
 }
+
+/* Ukrycie logo */
+#_desktop_logo{
+  display: none;
+}
+
+/* Rozciągnij header na 100% bez marginesów */
+.header-top .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.header-top .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+}
+
+/* Usuń padding z kolumn */
+.header-top .col-md-2,
+.header-top .col-md-10,
+.header-top .col-md-12 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Ustawiamy display flex na rodzicu 'menu' */
+.container > .row{
+  display: flex;
+}
+
+/* Ustawiamy flex na dzieci 'menu' */
+/* Rozciągnij na 100% szerokości */
+.header-top-right {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Display flex z wyrównaniem */
+.header-top-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+/* Wyśrodkowanie i rozciągnięcie menu */
+
+/* Header i menu na 100% szerokości */
+.header-top .container,
+.header-top .row,
+#_desktop_top_menu,
+#top-menu {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ukryj logo */
+#_desktop_logo {
+    display: none !important;
+}
+
+/* Menu area na pełną szerokość */
+.header-top-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+}
+
+/* Ukryj mobile menu na desktop */
+#mobile_top_menu_wrapper {
+    display: none !important;
+}
+
+/* WAŻNA SEKCJA, ZMIANA CAŁEGO GÓRNEGO HEADERA */
+/* Ukryj stary layout header-nav */
+.header-nav .row > .hidden-sm-down {
+    display: none !important;
+}
+
+/* Nowy custom header */
+.custom-header-flex {
+    display: flex !important;
+    align-items: center !important;
+    padding: 15px !important;
+    gap: 20px !important;
+    width: 100% !important;
+}
+
+/* Sekcje */
+.custom-header-flex .logo-section {
+    flex: 0 0 25% !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.custom-header-flex .middle-section {
+    flex: 0 0 50% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+/* User section (konto, koszyk) */
+.custom-header-flex .user-section {
+    flex: 0 0 25% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 10px !important;
+}
+
+/* Ostylowanie koszyka */
+.custom-header-flex .blockcart {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    border-radius: 4px !important;
+}
+
+/* Ustawienie koloru koszyka na czarny */
+.blockcart .header, .blockcart .header * {
+    color: #333 !important;
+}
+
+.blockcart .material-icons {
+    color: #333 !important;
+}
+
+/* Kontakt */
+.contact-info {
+    display: flex !important;
+    gap: 20px !important;
+    font-size: 14px !important;
+}
+
+/* Search bar */
+.custom-header-flex .search-bar {
+    width: 100% !important;
+}
+
+.custom-header-flex .search-bar #search_widget {
+    width: 100% !important;
+}
+
+.custom-header-flex .search-bar form {
+    width: 100% !important;
+}
+
+.custom-header-flex .search-bar input[type="text"] {
+    width: 100% !important;
+}
+
+/* Ustawienie wyglądu search bara, bez tła i z takim samym obramowaniem */
+.custom-header-flex .search-bar input[type="text"] {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+}
+
+/* Logo */
+.custom-header-flex .logo-section img {
+    max-height: 80px !important;
+}
+
+/* Rozciągnięcie user section na 100% */
+.custom-header-flex .user-section > div {
+    width: 100% !important;
+}
+
