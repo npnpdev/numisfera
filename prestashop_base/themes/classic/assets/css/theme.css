@@ -171,7 +171,7 @@ body, html {
 
 #top-menu > li > a:hover,
 .menu-list.large.standard > li > a:hover {
-  background-color: #f1c40f;
+  background-color: #E9C05D;
   color: #fff !important;
 }
 
@@ -418,3 +418,25 @@ body, html {
     width: 100% !important;
 }
 
+/* Dostosowanie bocznego panelu (z lewej strony) kategorii */
+
+/* Ukrywamy napis 'strona glowna' nad menu kategorii */
+ul.category-top-menu a.text-uppercase.h6 {
+    display: none;
+}
+
+/* Tło i padding dla bocznego panelu kategorii */
+.block-categories{
+  background-color: #404040;
+  padding: 12px 30px;
+}
+
+/* Kolor tekstu w bocznym panelu kategorii */
+ul.category-top-menu li a {
+    color: white;
+}
+
+/* Kolor 'plusików' w bocznym panelu kategorii */
+ul.category-top-menu li div.navbar-toggler.collapse-icons {
+    color: white;
+}
