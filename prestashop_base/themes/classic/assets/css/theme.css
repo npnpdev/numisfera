@@ -191,7 +191,7 @@ body, html {
 }
 
 #top-menu .sub-menu a:hover {
-  background-color: #f1c40f;
+  background-color: #E9C05D;
   color: #fff !important;
 }
 
@@ -461,4 +461,86 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
 
 .homePageLink:hover{
   color: #EBC36C !important;
+}
+
+
+
+/* =================================================================== */
+/*    FINALNY KOD CSS - Poprawione wyrównanie menu rozwijanego         */
+/* =================================================================== */
+
+/* Krok 1: Kontekst pozycjonowania dla głównego elementu menu ("Menu"). */
+#_desktop_top_menu .top-menu > li#category-2 {
+    position: relative;
+    z-index: 1001;
+}
+
+/* Krok 2: Pozycjonowanie kontenera i reset jego tła/ramki. */
+#_desktop_top_menu .popover.sub-menu {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 300px; /* <<< TUTAJ MOŻESZ ZMIENIĆ SZEROKOŚĆ LISTY */
+    
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Krok 3: NOWA POPRAWKA - Usunięcie domyślnego wcięcia listy UL. */
+/* To jest reguła, która naprawia przesunięcie w lewo. */
+#_desktop_top_menu .popover .top-menu {
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Krok 4: Wymuszenie pionowego układu dla każdej kategorii wewnątrz listy. */
+#_desktop_top_menu .popover .top-menu > li {
+    display: block;
+    width: 100%;
+    float: none;
+}
+
+#_desktop_top_menu .popover .top-menu > li.category {
+    margin: 0;
+}
+
+/* =================================================================== */
+/*        KOD CSS DLA WYSUWANYCH PODKATEGORII (FLY-OUT)          */
+/* =================================================================== */
+
+/* Ustawiamy pozycjonowanie dla każdej kategorii, która ma podkategorie,
+   aby wysuwana lista wiedziała, względem czego się ustawić. */
+#_desktop_top_menu .popover li.category {
+    position: relative;
+}
+
+/* Ukrywamy i pozycjonujemy wszystkie głębsze poziomy menu. */
+#_desktop_top_menu .popover .collapse {
+    display: none; /* Domyślnie ukryte */
+    position: absolute;
+    left: 100%; /* Pozycjonuje listę na prawo od rodzica */
+    top: -1px;  /* Delikatne wyrównanie w pionie, aby ramki się pokryły */
+    width: 300px; /* Taka sama szerokość jak menu główne - możesz zmienić */
+
+    /* Style wizualne, aby pasowały do głównej listy */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* POKAZUJEMY ukrytą listę, gdy najedziemy na jej rodzica. */
+#_desktop_top_menu .popover li.category:hover > .collapse {
+    display: block;
+}
+
+/* Dodajemy strzałkę do kategorii, które mają podmenu (opcjonalnie) */
+#_desktop_top_menu .popover a.dropdown-submenu::after {
+    content: '›'; /* Znak strzałki w prawo */
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5em; /* Powiększenie strzałki */
+    color: #cccccc;  /* Kolor strzałki */
 }
