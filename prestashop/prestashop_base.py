@@ -37,7 +37,7 @@ class XMLBuilder:
     
     """Buduje XML produktu""" 
     @staticmethod
-    def product(name: str, description: str, price: float, sku: str, category_id: int, feature_values_ids: list = None) -> ET.Element:
+    def product(name: str, description: str, price: float, sku: str, default_category_id: int, category_ids: list, feature_values_ids: dict = None) -> ET.Element:
         root = ET.Element('prestashop')
         root.set('xmlns:xlink', PRESTASHOP_NAMESPACE)
         
@@ -55,8 +55,8 @@ class XMLBuilder:
         ET.SubElement(prod, 'show_price').text = '1'
         ET.SubElement(prod, 'state').text = '1'           
         ET.SubElement(prod, 'pack_stock_type').text = '3' 
-        ET.SubElement(prod, 'id_category_default').text = str(category_id)
-        
+        ET.SubElement(prod, 'id_category_default').text = str(default_category_id)
+
         name_elem = ET.SubElement(prod, 'name')
         lang = ET.SubElement(name_elem, 'language', id=DEFAULT_LANGUAGE_ID)
         lang.text = name
@@ -67,8 +67,11 @@ class XMLBuilder:
         
         assoc = ET.SubElement(prod, 'associations')
         cats = ET.SubElement(assoc, 'categories')
-        cat = ET.SubElement(cats, 'category')
-        ET.SubElement(cat, 'id').text = str(category_id)
+
+        # Tworzymy pętlę, która doda wszystkie kategorie z listy
+        for cat_id in category_ids:
+            cat = ET.SubElement(cats, 'category')
+            ET.SubElement(cat, 'id').text = str(cat_id)
         
         # Atrybuty produktu
         if feature_values_ids:
@@ -163,21 +166,23 @@ class APIClient:
     def get_category(self, category_id: int) -> requests.Response:
         return self.get_all(f"categories/{category_id}")
     
-    """Parsuje szczegóły kategorii: (id, name)"""
+    """Parsuje szczegóły kategorii: (id, name, id_parent)"""
     def parse_category_detail(self, response: requests.Response) -> tuple:    
         try:
             root = ET.fromstring(response.content)
             cat_elem = root.find('category')
             if cat_elem is not None:
                 id_elem = cat_elem.find('id')
+                parent_id_elem = cat_elem.find('id_parent')
                 name_elem = cat_elem.find('name')
-                if id_elem is not None and name_elem is not None:
+                if id_elem is not None and name_elem is not None and parent_id_elem is not None:
                     lang_elem = name_elem.find('language')
                     if lang_elem is not None:
-                        return (id_elem.text, lang_elem.text)
+                        # Zwracamy ID, nazwę i ID rodzica
+                        return (id_elem.text, lang_elem.text, parent_id_elem.text)
         except Exception as e:
             print(f"ERROR: Parsowanie szczegółów kategorii - {e}")
-        return (None, None)
+        return (None, None, None)
 
     """Pobiera mapę wszystkich product_features (atrybutów): {nazwa → id}"""
     def get_features_map(self) -> dict:

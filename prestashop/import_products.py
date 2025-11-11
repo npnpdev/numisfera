@@ -33,9 +33,14 @@ class ProductImporter:
         with open(self.results_dir / filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     
-    """Pobiera wszystkie kategorie z API - z pełną ścieżką"""
+    """Pobiera wszystkie kategorie z API i buduje dwie mapy: nazw i relacji"""
     def build_category_map(self) -> None:
         print("INFO: Pobieranie wszystkich kategorii z API...")
+        
+        # Inicjalizujemy dwie mapy, które będziemy budować
+        self.category_name_to_id_map = {}
+        self.category_parent_map = {}
+
         response = self.api_client.get_all("categories")
         if response.status_code != 200:
             print(f"ERROR: API kategorii - {response.status_code}")
@@ -44,17 +49,25 @@ class ProductImporter:
         try:
             root = ET.fromstring(response.content)
             
-            for cat_elem in root.iter('category'):
-                cat_id = cat_elem.get('id')
-                if cat_id:
-                    detail_response = self.api_client.get_category(int(cat_id))
-                    if detail_response.status_code == 200:
-                        cat_id_str, cat_name = self.api_client.parse_category_detail(detail_response)
-                        if cat_name and cat_id_str:
-                            # Klucz: ID (unikatowe)
-                            self.category_map[int(cat_id_str)] = cat_name
+            # Pobieramy listę ID wszystkich kategorii
+            category_ids = [cat.get('id') for cat in root.iter('category') if cat.get('id')]
+
+            print(f"INFO: Znaleziono {len(category_ids)} kategorii. Pobieranie szczegółów...")
+
+            # Pobieramy szczegóły dla każdej kategorii
+            for cat_id in category_ids:
+                detail_response = self.api_client.get_category(int(cat_id))
+                if detail_response.status_code == 200:
+                    # Parsujemy odpowiedź, aby dostać ID, nazwę i ID rodzica
+                    cat_id_str, cat_name, parent_id_str = self.api_client.parse_category_detail(detail_response)
+                    
+                    if cat_name and cat_id_str and parent_id_str:
+                        # Zapisujemy do mapy nazw: { "Nazwa kategorii": 123 }
+                        self.category_name_to_id_map[cat_name] = int(cat_id_str)
+                        # Zapisujemy do mapy relacji: { 123: 45 } (ID kategorii -> ID rodzica)
+                        self.category_parent_map[int(cat_id_str)] = int(parent_id_str)
             
-            print(f"OK: Załadowano {len(self.category_map)} kategorii")
+            print(f"OK: Zbudowano mapy dla {len(self.category_name_to_id_map)} kategorii.")
         except Exception as e:
             print(f"ERROR: Budowanie mapy kategorii - {e}")
 
@@ -98,16 +111,30 @@ class ProductImporter:
         # Zamiana ceny brutto na netto
         price = round(price / (1 + self.vat_rate), 4)
 
-        # Szukamy ID kategorii
-        category_id = None
-        for cat_id, cat_name in self.category_map.items():
-            if cat_name == category_name:
-                category_id = cat_id
-                break
-        
-        if not category_id:
-            print(f"ERROR: Nie znaleziono kategorii '{category_name}'")
+        # Szukamy ID kategorii na podstawie nazwy
+        leaf_category_id = self.category_name_to_id_map.get(category_name)
+
+        if not leaf_category_id:
+            print(f"ERROR: Nie znaleziono ID dla kategorii o nazwie '{category_name}'")
             return
+
+        # Tworzymy listę wszystkich kategorii nadrzędnych aż do góry
+        category_ids = []
+        current_id = leaf_category_id
+
+        # Pętla działa, dopóki mamy poprawne ID i nie doszliśmy do samej góry (ID 0 lub 1)
+        while current_id and current_id > 1: 
+            category_ids.append(current_id)
+            # Szukamy aktualnego rodzica
+            current_id = self.category_parent_map.get(current_id)
+
+        # Dodajemy kategorię domyślną z configu, jeśli jej nie ma na liście
+        home_category_id = self.config['import'].get('HOME_CATEGORY_ID', 2)
+        if home_category_id not in category_ids:
+            category_ids.append(home_category_id)
+
+        # Ustawiamy domyślną kategorię na liść
+        default_category_id = leaf_category_id
 
         # Tworzymy cechy dla produktu
         feature_values_map = {} 
@@ -136,7 +163,7 @@ class ProductImporter:
             print(f"INFO: Brak atrybutów dla produktu ID {product_id}")
 
         # Budujemy XML
-        xml_elem = XMLBuilder.product(product_name, description, price, product_id, category_id, feature_values_map)
+        xml_elem = XMLBuilder.product(product_name, description, price, product_id, default_category_id, category_ids, feature_values_map)
 
         # Konwerujemy do wsyłania
         xml_string = ET.tostring(xml_elem, encoding='unicode')
