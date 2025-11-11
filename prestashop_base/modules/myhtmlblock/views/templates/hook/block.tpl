@@ -1,4 +1,4 @@
-{* Zawartoœæ wyœwietlana w ka¿dym hooku *}
+{* Zawartoï¿½ï¿½ wyï¿½wietlana w kaï¿½dym hooku *}
 <div class="myhtmlblock">
   {$content nofilter}
 </div>

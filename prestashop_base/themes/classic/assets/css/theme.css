@@ -463,24 +463,21 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
   color: #EBC36C !important;
 }
 
-
-
 /* =================================================================== */
 /*    FINALNY KOD CSS - Poprawione wyrównanie menu rozwijanego         */
 /* =================================================================== */
 
-/* Krok 1: Kontekst pozycjonowania dla głównego elementu menu ("Menu"). */
 #_desktop_top_menu .top-menu > li#category-2 {
     position: relative;
     z-index: 1001;
 }
 
-/* Krok 2: Pozycjonowanie kontenera i reset jego tła/ramki. */
+/* Pozycjonowanie kontenera i reset jego tła/ramki. */
 #_desktop_top_menu .popover.sub-menu {
     position: absolute;
     left: 0;
     top: 100%;
-    width: 300px; /* <<< TUTAJ MOŻESZ ZMIENIĆ SZEROKOŚĆ LISTY */
+    width: 300px; /* SZEROKOŚĆ LISTY */
     
     background: none;
     border: none;
@@ -489,14 +486,14 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Krok 3: NOWA POPRAWKA - Usunięcie domyślnego wcięcia listy UL. */
-/* To jest reguła, która naprawia przesunięcie w lewo. */
+/* Usunięcie domyślnego wcięcia listy UL.
+To jest reguła, która naprawia przesunięcie w lewo. */
 #_desktop_top_menu .popover .top-menu {
     padding-left: 0;
     margin: 0;
 }
 
-/* Krok 4: Wymuszenie pionowego układu dla każdej kategorii wewnątrz listy. */
+/* Wymuszenie pionowego układu dla każdej kategorii wewnątrz listy. */
 #_desktop_top_menu .popover .top-menu > li {
     display: block;
     width: 100%;
@@ -507,9 +504,8 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
     margin: 0;
 }
 
-/* =================================================================== */
-/*        KOD CSS DLA WYSUWANYCH PODKATEGORII (FLY-OUT)          */
-/* =================================================================== */
+
+/* KOD CSS DLA WYSUWANYCH PODKATEGORII */
 
 /* Ustawiamy pozycjonowanie dla każdej kategorii, która ma podkategorie,
    aby wysuwana lista wiedziała, względem czego się ustawić. */
@@ -523,7 +519,7 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
     position: absolute;
     left: 100%; /* Pozycjonuje listę na prawo od rodzica */
     top: -1px;  /* Delikatne wyrównanie w pionie, aby ramki się pokryły */
-    width: 300px; /* Taka sama szerokość jak menu główne - możesz zmienić */
+    width: 300px; /* Taka sama szerokość jak menu główne */
 
     /* Style wizualne, aby pasowały do głównej listy */
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -534,7 +530,7 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
     display: block;
 }
 
-/* Dodajemy strzałkę do kategorii, które mają podmenu (opcjonalnie) */
+/* Dodajemy strzałkę do kategorii, które mają podmenu */
 #_desktop_top_menu .popover a.dropdown-submenu::after {
     content: '›'; /* Znak strzałki w prawo */
     position: absolute;
@@ -543,4 +539,377 @@ ul.category-top-menu li div.navbar-toggler.collapse-icons {
     transform: translateY(-50%);
     font-size: 1.5em; /* Powiększenie strzałki */
     color: #cccccc;  /* Kolor strzałki */
+}
+
+
+/* --- Style dla Bloku Kategorii na Stronie Głównej --- */
+
+.myhtmlblock{
+  width: 100%;
+  height: auto;
+}
+
+.blok-kategorii-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 0;
+    margin: 20px 0;
+    list-style: none;
+}
+
+.blok-kategorii-grid li {
+    border: 1px solid #e0e0e0;
+    transition: box-shadow 0.2s;
+    overflow: hidden;
+    display: flex; /* Kluczowe, żeby ułożyć zdjęcie nad tekstem */
+    flex-direction: column; /* Układ pionowy */
+}
+
+.blok-kategorii-grid li:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Link na obrazku - musi się rozciągnąć */
+.kategoria-obrazek-link {
+    flex: 1; /* To sprawia, że obrazek zajmuje całą wolną przestrzeń */
+    overflow: hidden;
+}
+
+.kategoria-obrazek { height: 100%; }
+.kategoria-obrazek img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.blok-kategorii-grid li:hover .kategoria-obrazek img {
+    transform: scale(1.05);
+}
+
+/* Blok z nazwą */
+.kategoria-nazwa {
+    position: relative;
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+}
+/* Link wewnątrz bloku z nazwą */
+.kategoria-nazwa a {
+    text-decoration: none;
+    color: #333;
+}
+
+.kategoria-nazwa .strzalka {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+.kategoria-nazwa:hover .strzalka {
+    transform: rotate(90deg);
+}
+
+/* Lista podkategorii */
+.podkategorie-lista {
+    
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    text-align: left;
+    z-index: 10;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s ease-in-out;
+}
+
+.kategoria-nazwa:hover .podkategorie-lista {
+    visibility: visible;
+    opacity: 0.9;
+    transform: translateY(0);
+}
+
+.podkategorie-lista li a {
+    display: block;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: normal;
+    text-decoration: none;
+    color: #333 !important;
+}
+.podkategorie-lista li a:hover {
+    background: #f0f0f0;
+}
+.podkategorie-lista li a.pozostale {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Responsywność */
+@media (max-width: 992px) { .blok-kategorii-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 576px) { .blok-kategorii-grid { grid-template-columns: 1fr; } }
+
+/* zmiany na stronie głównej */
+
+/* Wyrównanie tytułu "Popularne produkty (Zmienione na POLECANE PRODUKTY)" do lewej */
+.products-section-title {
+    text-align: left !important;
+}
+
+/* ===== Stylowanie stopki strony ===== */
+
+#footer{
+  margin: 0;
+  padding: 0;
+}
+
+/* BLOK 1 - nasz główny kontener */
+.blok-1-stopki {
+    background-color: #404040;
+    border-bottom: 4px solid #eac05d;
+    padding: 30px 0; /* Wewnętrzne odstępy góra/dół */
+    color: white; /* Ustawia kolor tekstu i ikon na biały */
+    margin-bottom: 5vh;
+}
+
+/* Kontener na 4 sekcje */
+.usps-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: stretch; /* Ta linijka rozciągnie wszystkie elementy na całą wysokość siatki */
+}
+
+/* Pojedyncza sekcja (ikona + tekst) */
+.usp-item {
+    display: flex;
+    align-items: center; /* Wyrównuje ikonę i tekst w pionie */
+    justify-content: center;
+    gap: 15px;
+    padding: 0 15px;
+    border-right: 1px solid #5a5a5a;
+    align-self: stretch; /* To jest kluczowa zmiana - rozciąga element na całą dostępną wysokość */
+}
+
+.usp-item:last-child {
+    border-right: none; /* Usuwamy separator z ostatniego elementu */
+}
+
+/* Ikona */
+.usp-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+/* Tekst */
+.usp-text {
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+/* Responsywność */
+@media (max-width: 992px) {
+    .usps-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolumny na tabletach */
+        gap: 30px 0; /* Odstęp pionowy */
+    }
+    .usp-item:nth-child(2) {
+        border-right: none; /* Usuwamy niepotrzebny separator */
+    }
+    .usp-item {
+        padding-bottom: 30px;
+        border-bottom: 1px solid #5a5a5a;
+    }
+    .usp-item:nth-child(3), .usp-item:nth-child(4) {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .usps-container {
+        grid-template-columns: 1fr; /* 1 kolumna na telefonach */
+    }
+    .usp-item {
+        border-right: none;
+    }
+    .usp-item:not(:last-child) {
+      padding-bottom: 30px;
+      border-bottom: 1px solid #5a5a5a;
+    }
+}
+
+.blok-2-stopki {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-left: 12.5rem;
+  margin-right: 12.5rem;
+
+}
+#footer_copyright{
+  margin: 0;
+}
+
+#shoper_link{
+  color: #ab9458 !important;
+}
+
+#shoper_link:hover{
+  color: #F2CC5D !important;
+}
+
+/* Kolor tekstu copyright */
+#copyright_text{
+  color: #828282 !important;
+}
+
+.footer_custom_links{
+  font-size: 20px;
+  width: 50%;
+  display: flex;
+  align-items: stretch;
+}
+
+#newsletter_footer{
+  width: 50%;
+}
+
+.footer-container .row {
+    display: flex;
+}
+
+
+/* Rozciągniecie kolumn w stopce */
+.footer-container .col-md-6.links {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-basis: 100% !important;
+}
+
+/* Rozciagnięcie każdej kolumny linków na 50% szerokości */
+.footer-container .links .wrapper {
+  flex: 1;
+  padding: 0 15px; /* Drobny odstęp, żeby tekst nie stykał się z krawędziami */
+}
+
+
+/* STYL NEWSLETTERA W STOPCE STRONY
+
+/* Główny kontener */
+#blockEmailSubscription_displayFooterBefore {
+  border: 1px solid #e0e0e0;
+  padding: 25px;
+  text-align: left;
+}
+
+/* Ustawia tekst i formularz jeden pod drugim */
+#blockEmailSubscription_displayFooterBefore .col-md-5,
+#blockEmailSubscription_displayFooterBefore .col-md-7 {
+  width: 100%;
+}
+
+#blockEmailSubscription_displayFooterBefore #block-newsletter-label {
+  font-size: 0;
+  margin-bottom: 10px;
+}
+#blockEmailSubscription_displayFooterBefore #block-newsletter-label::before {
+  content: 'Zapisz sie do newslettera';
+  font-size: 18px;
+  font-weight: 600;
+}
+#blockEmailSubscription_displayFooterBefore #block-newsletter-label::after {
+  content: 'Tu damy Ci znac o nowych monetach i promocjach!';
+  display: block;
+  font-size: 12px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Ułożenie pola email i przycisku w jednej linii */
+#blockEmailSubscription_displayFooterBefore form .col-xs-12:first-child { display: flex; }
+#blockEmailSubscription_displayFooterBefore .input-wrapper {
+  flex-grow: 1;
+  order: 1; 
+}
+#blockEmailSubscription_displayFooterBefore input[type="email"] {
+  height: 48px;
+  border: 1px solid #b0b0b0;
+  border-right: none;
+  border-radius: 0;
+}
+
+/* Przycisk z ikoną koperty */
+#blockEmailSubscription_displayFooterBefore .btn-primary {
+  width: 56px;
+  height: 48px;
+  border: 1px solid #4a4a4a;
+  border-radius: 0;
+  float: none;
+  font-size: 0;
+  background: #4a4a4a url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>') center no-repeat;
+  background-size: 35px 30px; 
+  background-position: center; 
+  order: 2; 
+  margin: 0;
+}
+#blockEmailSubscription_displayFooterBefore .btn-primary:hover { background-color: #222; }
+
+/* Ukrycie niepotrzebnych rzeczy */
+#blockEmailSubscription_displayFooterBefore .hidden-sm-up,
+#blockEmailSubscription_displayFooterBefore form .col-xs-12:last-child {
+  display: none;
+}
+
+/* Sekcja logotypów */
+
+/* Główny kontener dla logotypów */
+.partner-logos-container {
+  display: flex;
+  justify-content: center; /* Wyśrodkowuje wszystkie logotypy w poziomie */
+  align-items: center; /* Wyśrodkowuje logotypy w pionie */
+  flex-wrap: wrap; /* Pozwala logotypom przenieść się niżej na małych ekranach */
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  margin: 30px 0; /* Odstęp od reszty stopki */
+}
+
+/* Każdy "box" z jednym logotypem */
+.partner-logos-container .logo-item {
+  padding: 0 50px; /* Odstęp wewnątrz każdego boxa */
+  border-right: 1px solid #eee; /* Pionowa kreska oddzielająca */
+  display: flex;
+  align-items: center;
+  min-height: 50px; /* Zapewnia równą wysokość separatorów */
+}
+
+/* Usuwamy ostatnią kreskę oddzielającą */
+.partner-logos-container .logo-item:last-child {
+  border-right: none;
+}
+
+/* Same obrazki i efekt "rozjaśnienia" */
+.partner-logos-container .logo-item img {
+  max-height: 60px;
+  opacity: 0.7; /* Lekko przygaszone domyślnie */
+  transition: opacity 0.3s ease; /* Płynne przejście efektu */
+}
+
+.partner-logos-container .logo-item a:hover img {
+  opacity: 1; /* Pełna widoczność po najechaniu myszką */
+}
+
+.custom-page-link:hover{
+  color: #EAC05D !important;
 }
