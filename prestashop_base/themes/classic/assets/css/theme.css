@@ -153,7 +153,7 @@ body, html {
   color: #ffffff !important;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -439,4 +439,26 @@ ul.category-top-menu li a {
 /* Kolor 'plusików' w bocznym panelu kategorii */
 ul.category-top-menu li div.navbar-toggler.collapse-icons {
     color: white;
+}
+
+/* Sprawia, że linki wypełniają całą wysokość i centrują treść w pionie */
+#top-menu > li > a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Dodatkowe, aby tekst też był idealnie na środku w poziomie */
+}
+
+/* Ustawienie domku na aktywny zawsze */
+#home-icon-link {
+  background-color: #E9C05D;
+  color: #fff !important;
+}
+
+.homePageLink{
+  color: #ab9458 !important;
+}
+
+.homePageLink:hover{
+  color: #EBC36C !important;
 }

@@ -2,6 +2,15 @@
 {function name="menu" nodes=[] depth=0 parent=null}
     {if $nodes|count}
       <ul class="top-menu" {if $depth == 0}id="top-menu"{/if} data-depth="{$depth}">
+
+        {if $depth == 0}
+          <li class="link" id="home-icon-link">
+            <a class="dropdown-item" href="{$urls.base_url}">
+              <i class="material-icons">home</i>
+            </a>
+          </li>
+        {/if}
+
         {foreach from=$nodes item=node}
             <li class="{$node.type}{if $node.current} current {/if}" id="{$node.page_identifier}">
             {assign var=_counter value=$_counter+1}

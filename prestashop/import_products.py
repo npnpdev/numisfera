@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
 from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE
+from concurrent.futures import ThreadPoolExecutor
 from import_images import process_product_images
 
 """Importer produktów do PrestaShopa"""
@@ -12,10 +13,13 @@ class ProductImporter:
         self.config = self._load_config(config_file)
         self.api_client = APIClient(
             self.config['prestashop']['api_url'],
-            self.config['prestashop']['api_key']
+            self.config['prestashop']['api_key'],
+            self.config['prestashop'].get('verify_ssl', True)
         )
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
         self.category_map = {}
+        self.max_workers = self.config['import'].get('MAX_WORKERS', 5)
+        self.vat_rate = self.config['import'].get('vat_rate', 0.23)
     
     """Wczytuje config TOML"""
     @staticmethod
@@ -71,10 +75,12 @@ class ProductImporter:
             limit = self.config['import'].get('products_limit', len(products))
             products = products[:limit]
             
-            for idx, product in enumerate(products):
-                self._import_product(product, features_map)
-                if (idx + 1) % 100 == 0:
-                    print(f"INFO: Przetworzono {idx + 1} produktów...")
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = [executor.submit(self._import_product, product, features_map) for product in products]
+                for idx, future in enumerate(futures):
+                    future.result()  # Wyrzuca wyjątek jeśli się pojawił
+                    if (idx + 1) % 100 == 0:
+                        print(f"INFO: Przetworzono {idx + 1} produktów...")
             
             print(f"OK: Dodano {len(products)} produktów")
         except Exception as e:
@@ -88,7 +94,10 @@ class ProductImporter:
         category_name = product['category_name']
         description = product['description']
         images = product.get('images', [])
-        
+
+        # Zamiana ceny brutto na netto
+        price = round(price / (1 + self.vat_rate), 4)
+
         # Szukamy ID kategorii
         category_id = None
         for cat_id, cat_name in self.category_map.items():
@@ -129,7 +138,7 @@ class ProductImporter:
         # Budujemy XML
         xml_elem = XMLBuilder.product(product_name, description, price, product_id, category_id, feature_values_map)
 
-        # Konwertujemy
+        # Konwerujemy do wsyłania
         xml_string = ET.tostring(xml_elem, encoding='unicode')
 
         xml_bytes = xml_string.encode('utf-8')
@@ -143,6 +152,7 @@ class ProductImporter:
             # Pobieramy i dodajemy obrazy
             if images:
                 process_product_images(prod_id, images, self.config)
+            
         else:
             print(f"ERROR: '{product_name}' - {response.status_code}")
             print(f"RESPONSE: {response.text[:500]}")  

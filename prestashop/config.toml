@@ -1,12 +1,15 @@
 [prestashop]
-api_url = "http://localhost:8001/api"
+api_url = "https://localhost/api"
 api_key = "SLZAZMME7IRMFDDJFCQZ4QUJCEEF68P2"
-admin_url = "http://localhost:8001/admin-dev"
+admin_url = "https://localhost/admin-dev"
+verify_ssl = false
 
 [import]
-products_limit = 5
-product_quantity = 9
+products_limit = 1000
+product_quantity_range = [0, 10]  # min, max
+vat_rate = 0.23
 active = true
+MAX_WORKERS = 8
 
 [paths]
 results_dir = "scraper/results"

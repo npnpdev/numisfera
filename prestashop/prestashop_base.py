@@ -1,4 +1,5 @@
 import requests
+import urllib3
 import xml.etree.ElementTree as ET
 from typing import Optional
 from requests.auth import HTTPBasicAuth
@@ -6,7 +7,7 @@ from requests.auth import HTTPBasicAuth
 # Globalne
 CONFIG_FILE = 'config.toml'
 DEFAULT_PARENT_CATEGORY_ID = 2 # ID głównej kategorii "Root" w PrestaShop
-DEFAULT_LANGUAGE_ID = '1'
+DEFAULT_LANGUAGE_ID = '1' 
 PRESTASHOP_NAMESPACE = 'http://www.w3.org/1999/xlink'
 API_SUCCESS_CODES = (200, 201)
 API_TIMEOUT = 30
@@ -57,11 +58,11 @@ class XMLBuilder:
         ET.SubElement(prod, 'id_category_default').text = str(category_id)
         
         name_elem = ET.SubElement(prod, 'name')
-        lang = ET.SubElement(name_elem, 'language', id='1')
+        lang = ET.SubElement(name_elem, 'language', id=DEFAULT_LANGUAGE_ID)
         lang.text = name
         
         desc_elem = ET.SubElement(prod, 'description')
-        lang_desc = ET.SubElement(desc_elem, 'language', id='1')
+        lang_desc = ET.SubElement(desc_elem, 'language', id=DEFAULT_LANGUAGE_ID)
         lang_desc.text = f"{description}"
         
         assoc = ET.SubElement(prod, 'associations')
@@ -115,10 +116,15 @@ class XMLBuilder:
 
 """Komunikacja z PrestaShop API"""
 class APIClient:
-    def __init__(self, api_url: str, api_key: str):
+    def __init__(self, api_url: str, api_key: str, verify_ssl: bool = True):
         self.api_url = api_url
         self.api_key = api_key
         self.session = requests.Session()
+        self.verify_ssl = verify_ssl
+
+        # Wyłącz ostrzeżenia SSL jeśli weryfikacja jest wyłączona
+        if not verify_ssl:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     """Wyciąga ID z odpowiedzi API"""
     def parse_response(self, response: requests.Response) -> Optional[str]:
@@ -132,14 +138,30 @@ class APIClient:
             print(f"ERROR: Parsowanie odpowiedzi - {e}")
         return None
 
-    """Pobiera szczegóły jednej kategorii"""
-    def get_category(self, category_id: int) -> requests.Response:
-        return self.session.get(
-            f"{self.api_url}/categories/{category_id}",
+    """Wysyła zasób do danego endpointu"""
+    def post(self, endpoint: str, xml_payload: bytes) -> requests.Response:
+        return self.session.post(
+            f"{self.api_url}/{endpoint}",
+            data=xml_payload,
             headers={'Content-Type': 'application/xml'},
             auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
+            timeout=API_TIMEOUT,
+            verify=self.verify_ssl
         )
+
+    """Pobiera wszystkie zasoby z danego endpointu"""
+    def get_all(self, endpoint: str) -> requests.Response:
+        return self.session.get(
+            f"{self.api_url}/{endpoint}",
+            headers={'Content-Type': 'application/xml'},
+            auth=HTTPBasicAuth(self.api_key, ''),
+            timeout=API_TIMEOUT,
+            verify=self.verify_ssl
+        )
+
+    """Pobiera szczegóły jednej kategorii"""
+    def get_category(self, category_id: int) -> requests.Response:
+        return self.get_all(f"categories/{category_id}")
     
     """Parsuje szczegóły kategorii: (id, name)"""
     def parse_category_detail(self, response: requests.Response) -> tuple:    
@@ -167,12 +189,8 @@ class APIClient:
                 for feat_elem in root.iter('product_feature'):
                     feat_id = feat_elem.get('id')
                     if feat_id:
-                        detail_resp = self.session.get(
-                            f"{self.api_url}/product_features/{feat_id}",
-                            headers={'Content-Type': 'application/xml'},
-                            auth=HTTPBasicAuth(self.api_key, ''),
-                            timeout=API_TIMEOUT
-                        )
+                        detail_resp = self.get_all(f"product_features/{feat_id}")
+
                         if detail_resp.status_code == 200:
                             detail_root = ET.fromstring(detail_resp.content)
                             name_elem = detail_root.find('.//product_feature/name/language')
@@ -181,22 +199,3 @@ class APIClient:
         except Exception as e:
             print(f"ERROR: Pobieranie mapy features - {e}")
         return features_map
-
-    """Wysyła zasób do danego endpointu"""
-    def post(self, endpoint: str, xml_payload: bytes) -> requests.Response:
-        return self.session.post(
-            f"{self.api_url}/{endpoint}",
-            data=xml_payload,
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )
-
-    """Pobiera wszystkie zasoby z danego endpointu"""
-    def get_all(self, endpoint: str) -> requests.Response:
-        return self.session.get(
-            f"{self.api_url}/{endpoint}",
-            headers={'Content-Type': 'application/xml'},
-            auth=HTTPBasicAuth(self.api_key, ''),
-            timeout=API_TIMEOUT
-        )

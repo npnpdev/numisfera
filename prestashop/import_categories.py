@@ -5,14 +5,15 @@ from typing import List, Dict
 
 from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE, DEFAULT_PARENT_CATEGORY_ID
 
-"""Importer kategorii do PrestaShopa"""
 class PrestashopImporter:
     def __init__(self, config_file: str = CONFIG_FILE):
         self.config = self._load_config(config_file)
         self.api_client = APIClient(
             self.config['prestashop']['api_url'],
-            self.config['prestashop']['api_key']
+            self.config['prestashop']['api_key'],
+            self.config['prestashop'].get('verify_ssl', True)
         )
+        self.max_workers = self.config['import'].get('MAX_WORKERS', 5)
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
     
     """Wczytuje config TOML"""

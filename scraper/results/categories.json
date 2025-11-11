@@ -672,13 +672,13 @@
         "url": "https://numizmatyczny.com/monety-II-RP-5zl",
         "children": [
           {
-            "name": "5 zł Nike 1928 - 1932",
-            "url": "https://numizmatyczny.com/pl/c/5-zl-Nike-1928-1932/250",
+            "name": "5 zł Żaglowiec 1936",
+            "url": "https://numizmatyczny.com/monety-5zl-zaglowiec-1936",
             "children": []
           },
           {
-            "name": "5 zł Żaglowiec 1936",
-            "url": "https://numizmatyczny.com/monety-5zl-zaglowiec-1936",
+            "name": "5 zł Nike 1928 - 1932",
+            "url": "https://numizmatyczny.com/pl/c/5-zl-Nike-1928-1932/250",
             "children": []
           },
           {
@@ -1019,6 +1019,11 @@
         "url": "https://numizmatyczny.com/kuferki-na-monety",
         "children": [
           {
+            "name": "Kasety MB CAPS",
+            "url": "https://numizmatyczny.com/kasety-MB-CAPS",
+            "children": []
+          },
+          {
             "name": "Kuferki i Walizki",
             "url": "https://numizmatyczny.com/kuferki-i-walizki",
             "children": []
@@ -1026,11 +1031,6 @@
           {
             "name": "Palety",
             "url": "https://numizmatyczny.com/palety-numizmatyczne",
-            "children": []
-          },
-          {
-            "name": "Kasety MB CAPS",
-            "url": "https://numizmatyczny.com/kasety-MB-CAPS",
             "children": []
           }
         ]
