@@ -1,7 +1,6 @@
 import random
 import tomllib
 from pathlib import Path
-import re
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from prestashop_base import APIClient, CONFIG_FILE
@@ -69,13 +68,7 @@ class StockUpdater:
                 return False
             
             # Pobieramy pełny XML
-            response = self.api_client.session.get(
-                f"{self.api_client.api_url}/stock_availables/{stock_id}",
-                headers={'Content-Type': 'application/xml'},
-                auth=(self.api_client.api_key, ''),
-                timeout=30,
-                verify=self.api_client.verify_ssl
-            )
+            response = self.api_client.get_all(f"stock_availables/{stock_id}")
             
             if response.status_code != 200:
                 print(f"ERROR: GET stock XML prod {prod_id} - {response.status_code}")
@@ -85,22 +78,15 @@ class StockUpdater:
             quantity = self._get_random_quantity()
             
             # Zmieniamy ilość w XML
-            xml_content = response.text
-            updated_xml = re.sub(
-                r'<quantity><!\[CDATA\[(\d+)\]\]></quantity>',
-                f'<quantity><![CDATA[{quantity}]]></quantity>',
-                xml_content
-            )
+            stock_xml = ET.fromstring(response.content)
+            quantity_element = stock_xml.find('.//stock_available/quantity')
+            if quantity_element is not None:
+                quantity_element.text = str(quantity)
             
+            updated_xml_bytes = ET.tostring(stock_xml, encoding='utf-8')
+
             # Wysyłamy zmieniony XML
-            put_response = self.api_client.session.put(
-                f"{self.api_client.api_url}/stock_availables/{stock_id}",
-                data=updated_xml.encode('utf-8'),
-                headers={'Content-Type': 'application/xml'},
-                auth=(self.api_client.api_key, ''),
-                timeout=30,
-                verify=self.api_client.verify_ssl
-            )
+            put_response = self.api_client.put("stock_availables", updated_xml_bytes)
             
             if put_response.status_code in (200, 201):
                 print(f"OK: Produkt {prod_id} → stock={quantity}")
@@ -117,15 +103,8 @@ class StockUpdater:
     def _get_stock_available_id(self, prod_id: int) -> int:
         try:
             # URL z ręcznym encodowaniem nawiasów
-            url = f"{self.api_client.api_url}/stock_availables?filter%5Bid_product%5D={prod_id}"
-            
-            response = self.api_client.session.get(
-                url,
-                headers={'Content-Type': 'application/xml'},
-                auth=(self.api_client.api_key, ''),
-                timeout=30,
-                verify=self.api_client.verify_ssl
-            )
+            endpoint = f"stock_availables?filter[id_product]={prod_id}"
+            response = self.api_client.get_all(endpoint)
             
             if response.status_code == 200:
                 root = ET.fromstring(response.content)

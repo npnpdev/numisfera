@@ -152,6 +152,20 @@ class APIClient:
             verify=self.verify_ssl
         )
 
+    """Wysyła zaktualizowany zasób do danego endpointu metodą PUT"""
+    def put(self, endpoint: str, xml_payload: bytes) -> requests.Response:
+        # Adres URL dla PUT musi zawierać ID zasobu, które jest w XML-u
+        resource_id = ET.fromstring(xml_payload).find(f'.//{endpoint[:-1]}/id').text
+        
+        return self.session.put(
+            f"{self.api_url}/{endpoint}/{resource_id}",
+            data=xml_payload,
+            headers={'Content-Type': 'application/xml'},
+            auth=HTTPBasicAuth(self.api_key, ''),
+            timeout=API_TIMEOUT,
+            verify=self.verify_ssl
+        )
+
     """Pobiera wszystkie zasoby z danego endpointu"""
     def get_all(self, endpoint: str) -> requests.Response:
         return self.session.get(

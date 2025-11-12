@@ -6,11 +6,36 @@ verify_ssl = false
 
 [import]
 HOME_CATEGORY_ID = 2
-products_limit = 1000
+products_limit = 100
 product_quantity_range = [0, 10]  # min, max
 vat_rate = 0.23
 active = true
 MAX_WORKERS = 6
+
+[modifications]
+num_of_heavy_products = 10
+min_quantity_for_heavy = 5
+heavy_product_weight = 20 # kg
+
+promotion_product_count = 5
+promotion_reduction_percentage = 0.15  # 15%
+
+[modifications.variants]
+variants_to_create = 5
+attribute_group_name = "Stan monety"
+
+[[modifications.variants.attributes]]
+name = "Menniczy"
+price_impact = 0.0
+
+[[modifications.variants.attributes]]
+name = "Bardzo dobry"
+price_impact = -30.0 # 30 zł taniej
+
+[[modifications.variants.attributes]]
+name = "Obiegowy"
+price_impact = -60.0 # 60 zł taniej
+
 
 [paths]
 results_dir = "scraper/results"
