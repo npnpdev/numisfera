@@ -48,6 +48,7 @@ services:
         - mysql
     volumes:
       - ./:/var/www/html/:delegated
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
   nginx:
     image: nginx:1.25-alpine
     depends_on:
