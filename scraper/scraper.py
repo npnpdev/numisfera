@@ -56,7 +56,7 @@ class Scraper:
         self.config = config
         self.http = http
     
-    """Oczyszcza opis produktu z tagów <iframe> i ich zawartości"""
+    """Czyści opis produktu z tagów <iframe> i ich zawartości"""
     def _clean_description(self, description: str) -> str:
         if not description:
             return ''
@@ -64,24 +64,31 @@ class Scraper:
         description = re.sub(r'<iframe.*?</iframe>', '', description, flags=re.DOTALL | re.IGNORECASE)
         return description
 
-    """Tworzy płaską listę kategorii, które są liśćmi w drzewie"""
+    """Tworzy listę kategorii-liści, każda z pełną ścieżką do niej."""
     def _get_leaf_categories(self, tree: List[Dict]) -> List[Dict]:
-        leaf_nodes = []
+        leaf_nodes_with_paths = []
         
-        def traverse(nodes: List[Dict]):
+        def traverse(nodes: List[Dict], current_path: List[str]):
             for node in nodes:
-                if 'children' in node and node['children']: # Sprawdzamy czy lista dzieci istnieje i nie jest pusta
-                    traverse(node['children'])
+                # Tworzymy nową ścieżkę dla tej gałęzi, dodając aktualną nazwę
+                new_path = current_path + [node['name']]
+                
+                if 'children' in node and node['children']:
+                    # Jeśli są dzieci, idziemy głębiej
+                    traverse(node['children'], new_path)
                 else:
-                    leaf_nodes.append(node)
+                    # To jest liść. Zapisujemy jego dane razem z pełną ścieżką.
+                    leaf_info = {
+                        'name': node['name'],
+                        'url': node['url'],
+                        'path': new_path
+                    }
+                    leaf_nodes_with_paths.append(leaf_info)
         
-        traverse(tree)
-        return leaf_nodes
+        traverse(tree, [])
+        return leaf_nodes_with_paths
 
-    """
-    Pobiera: Wszystkie kategorie ze strukturą hierarchiczną
-    Zwraca: Lista kategorii z hierarchią (dzieci w 'children')
-    """
+    """ Pobiera cała listę kategorii i buduje z niej drzewo kategorii """
     def scrape_categories(self) -> List[Dict]:
         print("ETAP 1: Pobieranie kategorii...")
         
@@ -191,7 +198,7 @@ class Scraper:
     """Pobiera produkty z jednej kategorii liścia"""
     def _scrape_products_from_category(self, category: Dict) -> List[Dict]:
         category_url = category['url']
-        category_name = category['name']
+        category_path = category['path']  # Używamy ścieżki kategorii
         products_from_category = []
         
         page = self.http.get_page(category_url)
@@ -205,14 +212,15 @@ class Scraper:
         product_items = products_container.select(self.config.data['page_locators']['product_item'])
         
         for product_item in product_items:
-            product_data = self._extract_product_data(product_item, category_name)
+            # Przekazujemy całą ścieżkę
+            product_data = self._extract_product_data(product_item, category_path)
             if product_data:
                 products_from_category.append(product_data)
                 
         return products_from_category
 
     """Wyciąga dane z jednego produktu"""
-    def _extract_product_data(self, product_item, category_name: str) -> Optional[Dict]:
+    def _extract_product_data(self, product_item, category_path: List[str]) -> Optional[Dict]:
         try:
             locators = self.config.data['product_locators']
             
@@ -234,7 +242,7 @@ class Scraper:
                 'id': product_id,
                 'name': name,
                 'link': link,
-                'category_name': category_name
+                'category_path': category_path  # ZAPISUJEMY PEŁNĄ ŚCIEŻKĘ
             }
         
         except Exception as e:
@@ -256,7 +264,7 @@ class Scraper:
     Zwraca: Lista produktów ze szczegółami: [{name, price, description, attributes, images}]
     """
     def scrape_product_details(self, products: List[Dict]) -> List[Dict]:
-        print(f"\nETAP 3: Pobieranie szczegółów dla {len(products)} produktów (wielowątkowo)...")
+        print(f"\nETAP 3: Pobieranie szczegółów dla {len(products)} produktów...")
         
         detailed_products = []
 

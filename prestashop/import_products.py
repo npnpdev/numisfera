@@ -33,13 +33,14 @@ class ProductImporter:
         with open(self.results_dir / filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     
-    """Pobiera wszystkie kategorie z API i buduje dwie mapy: nazw i relacji"""
+    """Pobiera wszystkie kategorie z API i buduje mapę {'pełna->scieżka': id}"""
     def build_category_map(self) -> None:
-        print("INFO: Pobieranie wszystkich kategorii z API...")
+        print("INFO: Pobieranie wszystkich kategorii i budowanie mapy ścieżek...")
         
-        # Inicjalizujemy dwie mapy, które będziemy budować
-        self.category_name_to_id_map = {}
-        self.category_parent_map = {}
+        # mapy pomocnicze i docelowa mapa ścieżek
+        id_to_name_map = {}
+        self.id_to_parent_map = {}
+        self.path_to_id_map = {}
 
         response = self.api_client.get_all("categories")
         if response.status_code != 200:
@@ -48,26 +49,35 @@ class ProductImporter:
         
         try:
             root = ET.fromstring(response.content)
-            
-            # Pobieramy listę ID wszystkich kategorii
-            category_ids = [cat.get('id') for cat in root.iter('category') if cat.get('id')]
-
+            category_ids = [int(cat.get('id')) for cat in root.iter('category') if cat.get('id')]
             print(f"INFO: Znaleziono {len(category_ids)} kategorii. Pobieranie szczegółów...")
 
-            # Pobieramy szczegóły dla każdej kategorii
+            # Zbieramy surowe dane do map pomocniczych
             for cat_id in category_ids:
-                detail_response = self.api_client.get_category(int(cat_id))
+                if cat_id <= 2:  # Pomijamy kategorię ROOT
+                    continue
+                detail_response = self.api_client.get_category(cat_id)
                 if detail_response.status_code == 200:
-                    # Parsujemy odpowiedź, aby dostać ID, nazwę i ID rodzica
                     cat_id_str, cat_name, parent_id_str = self.api_client.parse_category_detail(detail_response)
-                    
                     if cat_name and cat_id_str and parent_id_str:
-                        # Zapisujemy do mapy nazw: { "Nazwa kategorii": 123 }
-                        self.category_name_to_id_map[cat_name] = int(cat_id_str)
-                        # Zapisujemy do mapy relacji: { 123: 45 } (ID kategorii -> ID rodzica)
-                        self.category_parent_map[int(cat_id_str)] = int(parent_id_str)
+                        id_to_name_map[int(cat_id_str)] = cat_name
+                        self.id_to_parent_map[int(cat_id_str)] = int(parent_id_str)
             
-            print(f"OK: Zbudowano mapy dla {len(self.category_name_to_id_map)} kategorii.")
+            # Dla każdej kategorii odtwarzamy jej pełną ścieżkę
+            for cat_id, cat_name in id_to_name_map.items():
+                path = []
+                current_id = cat_id
+                
+                # Pętla "wspina się" po drzewie, zbierając nazwy rodziców
+                while current_id in self.id_to_parent_map and current_id > 2:
+                    path.insert(0, id_to_name_map[current_id])
+                    current_id = self.id_to_parent_map[current_id]
+                
+                # Dodajemy do mapy ścieżek
+                self.path_to_id_map[tuple(path)] = cat_id
+
+            print(f"OK: Zbudowano unikalną mapę dla {len(self.path_to_id_map)} ścieżek kategorii.")
+        
         except Exception as e:
             print(f"ERROR: Budowanie mapy kategorii - {e}")
 
@@ -104,21 +114,30 @@ class ProductImporter:
         product_name = product['name']
         product_id = product['id']
         price = product['price']
-        category_name = product['category_name']
+        
         description = product['description']
         images = product.get('images', [])
 
+        # Pobieramy ścieżkę kategorii z danych produktu
+        category_path = product.get('category_path', [])
+        if not category_path:
+            print(f"ERROR: Brak 'category_path' dla produktu '{product_name}'")
+            return
+        
+        # Konwertujemy ścieżkę, aby użyć jej jako klucza w mapie
+        category_path_tuple = tuple(category_path)
+        
+        # Szukamy ID kategorii na podstawie PEŁNEJ ŚCIEŻKI w nowej mapie
+        leaf_category_id = self.path_to_id_map.get(category_path_tuple)
+
+        if not leaf_category_id:
+            print(f"ERROR: Nie znaleziono ID dla ścieżki kategorii: '{' -> '.join(category_path)}'")
+            return
+            
         # Zamiana ceny brutto na netto
         price = round(price / (1 + self.vat_rate), 4)
 
-        # Szukamy ID kategorii na podstawie nazwy
-        leaf_category_id = self.category_name_to_id_map.get(category_name)
-
-        if not leaf_category_id:
-            print(f"ERROR: Nie znaleziono ID dla kategorii o nazwie '{category_name}'")
-            return
-
-        # Tworzymy listę wszystkich kategorii nadrzędnych aż do góry
+        # Tworzymy listę wszystkich kategorii nadrzędnych
         category_ids = []
         current_id = leaf_category_id
 
@@ -126,7 +145,7 @@ class ProductImporter:
         while current_id and current_id > 1: 
             category_ids.append(current_id)
             # Szukamy aktualnego rodzica
-            current_id = self.category_parent_map.get(current_id)
+            current_id = self.id_to_parent_map.get(current_id)
 
         # Dodajemy kategorię domyślną z configu, jeśli jej nie ma na liście
         home_category_id = self.config['import'].get('HOME_CATEGORY_ID', 2)

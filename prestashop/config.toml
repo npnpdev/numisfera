@@ -10,7 +10,7 @@ products_limit = 1000
 product_quantity_range = [0, 10]  # min, max
 vat_rate = 0.23
 active = true
-MAX_WORKERS = 8
+MAX_WORKERS = 6
 
 [paths]
 results_dir = "scraper/results"

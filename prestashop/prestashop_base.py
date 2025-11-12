@@ -125,7 +125,7 @@ class APIClient:
         self.session = requests.Session()
         self.verify_ssl = verify_ssl
 
-        # Wyłącz ostrzeżenia SSL jeśli weryfikacja jest wyłączona
+        # Wyłączamy ostrzeżenia SSL jeśli weryfikacja jest wyłączona
         if not verify_ssl:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
