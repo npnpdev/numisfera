@@ -76,14 +76,14 @@ python selenium_tests.py
 
 ## Skład zespołu
 
-- **Igor Tomkowicz** - Rola
-- **Paweł Reguła** - Rola
-- **Urszula Dramińska** - Rola
-- **Aleksander Hlebowicz** - Rola
+- **Igor Tomkowicz** - Scraping/API
+- **Paweł Reguła** - Testy
+- **Urszula Dramińska** - UI
+- **Aleksander Hlebowicz** - Konfiguracja sklepu
 
 ## Status projektu
 
-🚧 W trakcie realizacji - Etap I
+Zrealizowany :D
 
 ## Funkcjonalności sklepu
 
@@ -93,7 +93,7 @@ python selenium_tests.py
 - Rejestracja i logowanie użytkowników
 - Polskie metody płatności
 - Dwóch przewoźników z różnymi opłatami
-- Darmowa dostawa powyżej 2000 zł
+- Darmowa dostawa powyżej 20000 zł
 - Powiadomienia e-mail
 - Wyszukiwarka produktów
 - Historia zamówień
