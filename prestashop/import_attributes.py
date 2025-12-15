@@ -2,17 +2,19 @@ import json
 import tomllib
 from pathlib import Path
 from typing import List, Dict, Set
-import xml.etree.ElementTree as ET
 from prestashop_base import XMLBuilder, APIClient, CONFIG_FILE
+from concurrent.futures import ThreadPoolExecutor
 
 class AttributeImporter:
     def __init__(self, config_file: str = CONFIG_FILE):
         self.config = self._load_config(config_file)
         self.api_client = APIClient(
             self.config['prestashop']['api_url'],
-            self.config['prestashop']['api_key']
+            self.config['prestashop']['api_key'],
+            self.config['prestashop'].get('verify_ssl', True)
         )
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
+        self.max_workers = self.config['import'].get('MAX_WORKERS', 5)
     
     @staticmethod
     def _load_config(config_file: str) -> Dict:
@@ -33,7 +35,7 @@ class AttributeImporter:
             
             for product in products:
                 if 'attributes' in product and isinstance(product['attributes'], dict):
-                    # Atrybuty to DICT {"Rok Emisji": "2025", ...}
+                    # Atrybuty to DICT {"Atrybut": "Atrybut", ...}
                     for attr_name in product['attributes'].keys():
                         attributes.add(attr_name)
             
@@ -44,37 +46,47 @@ class AttributeImporter:
         
         except Exception as e:
             print(f"ERROR: {e}")
-            import traceback
-            traceback.print_exc()
             return set()
     
+    """Wysyła jeden atrybut do API i zwraca status operacji"""
+    def _import_single_attribute(self, attr_name: str) -> str:
+        xml_elem = XMLBuilder.product_feature(attr_name)
+        xml_bytes = XMLBuilder.to_bytes(xml_elem)
+        response = self.api_client.post("product_features", xml_bytes)
+        
+        if response.status_code in (200, 201):
+            print(f"OK: {attr_name}")
+            return "created"
+        elif response.status_code == 409:
+            print(f"INFO: {attr_name} (już istnieje)")
+            return "skipped"
+        else:
+            print(f"ERROR: {attr_name} ({response.status_code})")
+            return "error"
+
     """Główna funkcja importu atrybutów"""
     def import_attributes(self) -> None:
         print("INFO: Rozpoczynam import atrybutów\n")
         
-        # Pobieramy atrybuty
         attributes = self.read_attributes()
         if not attributes:
-            print("ERROR: Brak atrybutów!")
+            print("ERROR: Brak atrybutów do zaimportowania!")
             return
+
+        print(f"\nINFO: Importuję {len(attributes)} atrybutów...\n")
+
+        sorted_attributes = sorted(list(attributes))
         
-        # Importujemy atrybuty
-        print(f"\nINFO: Import {len(attributes)} atrybutów...\n")
-        created = 0
-        for attr_name in sorted(attributes):
-            xml_elem = XMLBuilder.product_feature(attr_name)
-            xml_bytes = XMLBuilder.to_bytes(xml_elem)
-            response = self.api_client.post("product_features", xml_bytes)
-            
-            if response.status_code in (200, 201):
-                print(f"OK: {attr_name}")
-                created += 1
-            elif response.status_code == 409:
-                print(f"INFO: {attr_name} (już istnieje)")
-            else:
-                print(f"ERROR: {attr_name} ({response.status_code})")
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            results = list(executor.map(self._import_single_attribute, sorted_attributes))
+
+        created_count = results.count("created")
+        skipped_count = results.count("skipped")
+        error_count = results.count("error")
         
-        print(f"\nOK: Utworzono {created} atrybutów")
+        print(f"INFO: Nowo utworzone: {created_count}")
+        print(f"INFO: Pominięte (istniejące): {skipped_count}")
+        print(f"ERRORS: {error_count}")
 
 if __name__ == "__main__":
     importer = AttributeImporter()

@@ -48,6 +48,7 @@ services:
         - mysql
     volumes:
       - ./:/var/www/html/:delegated
+      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
   nginx:
     image: nginx:1.25-alpine
     depends_on:
@@ -57,4 +58,13 @@ services:
       - ./certs:/etc/nginx/certs:ro
     ports:
       - "443:443"
+      - "80:80"
     restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+

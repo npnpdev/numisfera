@@ -1,6 +1,6 @@
 import requests
 from pathlib import Path
-import tomllib
+from PIL import Image
 
 class ImageDownloader:
     def __init__(self, images_dir: Path):
@@ -28,42 +28,68 @@ class ImageDownloader:
                 filename = f"{index}.jpg"
                 filepath = folder / filename
                 
+                # Zapisujemy obraz lokalnie
                 with open(filepath, 'wb') as f:
                     f.write(response.content)
                 
-                # print(f"DEBUG: Pobrano {filename}")
-                return str(filepath)
+                # Sprawdzamy format i konwertujemy do JPEG, jeśli potrzeba
+                try:
+                    img = Image.open(filepath)
+                    
+                    # Jeśli NIE jest JPEG - konwertujemy
+                    if img.format != 'JPEG':
+                        #print(f"DEBUG: Konwertowanie {img.format} -> JPEG dla {filename}")
+                        
+                        # Konwertujemy na RGB (JPEG nie obsługuje transparentności)
+                        if img.mode in ('RGBA', 'LA'):
+                            rgb_img = img.convert('RGB')
+                        elif img.mode == 'P':
+                            # Najpierw konwertuj z palety do RGBA, potem do RGB
+                            rgb_img = img.convert('RGBA').convert('RGB')
+                        else:
+                            rgb_img = img
+                        
+                        # Nadpisujemy jako JPEG
+                        rgb_img.save(filepath, 'JPEG', quality=95)
+                    
+                    return str(filepath)
+                    
+                except Exception as e:
+                    print(f"ERROR: Konwersja obrazu {url} - {e}")
+                    if filepath.exists():
+                        filepath.unlink()
+                    return None
+                    
         except Exception as e:
             print(f"ERROR: Pobieranie {url} - {e}")
         
         return None
 
-
 class ImageUploader:
-    def __init__(self, config: dict):
-        self.config = config
+    def __init__(self, api_url: str, api_key: str, verify_ssl: bool = True):
+        self.api_url = api_url
+        self.api_key = api_key
+        self.verify_ssl = verify_ssl
     
+    """Wysyła obrazy do PrestaShopa."""
     def upload_product_images(self, prod_id: int, local_paths: list) -> None:
-        """Wysyła obrazy do PrestaShopa."""
-        api_url = self.config['prestashop']['api_url']
-        api_key = self.config['prestashop']['api_key']
-        
-        for idx, local_path in enumerate(local_paths):
-            try:
-                with open(local_path, 'rb') as f:
-                    files = {'image': f}
-                    response = requests.post(
-                        f"{api_url}/images/products/{prod_id}",
-                        auth=(api_key, ''),
-                        files=files
-                    )
-                
-                if response.status_code in (200, 201):
-                    print(f"OK: Wysłano {idx}.jpg dla produktu {prod_id}")
-                else:
-                    print(f"ERROR: {response.status_code} - {response.text[:200]}")
-            except Exception as e:
-                print(f"ERROR: Wysyłanie {local_path} - {e}")
+            for idx, local_path in enumerate(local_paths):
+                try:
+                    with open(local_path, 'rb') as f:
+                        files = {'image': f}
+                        response = requests.post(
+                            f"{self.api_url}/images/products/{prod_id}",
+                            auth=(self.api_key, ''),
+                            files=files,
+                            verify=self.verify_ssl
+                        )
+                    
+                    if response.status_code in (200, 201):
+                        print(f"OK: Wysłano {idx}.jpg dla produktu {prod_id}")
+                    else:
+                        print(f"ERROR: {response.status_code} - {response.text[:200]}")
+                except Exception as e:
+                    print(f"ERROR: Wysyłanie {local_path} - {e}")
 
 """Główna funkcja - pobiera i importuje obrazy produktu"""
 def process_product_images(prod_id: int, image_urls: list, config: dict) -> None:
@@ -79,5 +105,9 @@ def process_product_images(prod_id: int, image_urls: list, config: dict) -> None
         return
     
     # Wysyłamy obrazy do PrestaShopa
-    uploader = ImageUploader(config)
+    uploader = ImageUploader(
+        config['prestashop']['api_url'],
+        config['prestashop']['api_key'],
+        config['prestashop'].get('verify_ssl', True)
+    )
     uploader.upload_product_images(prod_id, local_paths)

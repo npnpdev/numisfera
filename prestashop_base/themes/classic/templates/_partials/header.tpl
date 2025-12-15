@@ -31,7 +31,32 @@
 {block name='header_nav'}
   <nav class="header-nav">
     <div class="container">
-      <div class="row">
+      
+      {* CUSTOM HEADER LAYOUT *}
+      <div class="custom-header-flex">
+        <div class="logo-section">
+          <a href="{$urls.base_url}">
+            <img src="{$shop.logo}" alt="{$shop.name}" class="logo">
+          </a>
+        </div>
+        <div class="middle-section">
+          <div class="contact-info">
+            <div><i class="material-icons">phone</i> 502 210 907</div>
+            <div><i class="material-icons">email</i> sklep@numizmatyczny.com</div>
+          </div>
+          <div class="search-bar">
+            {widget name="ps_searchbar"}
+          </div>
+        </div>
+        <div class="user-section">
+          <div>{widget name="ps_customersignin"}</div>
+          <div>{widget name="ps_shoppingcart"}</div>
+        </div>
+      </div>
+      {* KONIEC CUSTOM HEADER *}
+      
+      {* Stary layout - ukryty przez CSS *}
+      <div class="row old-header">
         <div class="hidden-sm-down">
           <div class="col-md-5 col-xs-12">
             {hook h='displayNav1'}
@@ -53,6 +78,7 @@
     </div>
   </nav>
 {/block}
+
 
 {block name='header_top'}
   <div class="header-top">

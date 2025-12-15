@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
 from prestashop_base import XMLBuilder, APIClient, API_SUCCESS_CODES, CONFIG_FILE
+from concurrent.futures import ThreadPoolExecutor
 from import_images import process_product_images
 
 """Importer produktów do PrestaShopa"""
@@ -12,10 +13,13 @@ class ProductImporter:
         self.config = self._load_config(config_file)
         self.api_client = APIClient(
             self.config['prestashop']['api_url'],
-            self.config['prestashop']['api_key']
+            self.config['prestashop']['api_key'],
+            self.config['prestashop'].get('verify_ssl', True)
         )
         self.results_dir = Path(__file__).parent.parent / self.config['paths']['results_dir']
         self.category_map = {}
+        self.max_workers = self.config['import'].get('MAX_WORKERS', 5)
+        self.vat_rate = self.config['import'].get('vat_rate', 0.23)
     
     """Wczytuje config TOML"""
     @staticmethod
@@ -29,9 +33,15 @@ class ProductImporter:
         with open(self.results_dir / filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     
-    """Pobiera wszystkie kategorie z API - z pełną ścieżką"""
+    """Pobiera wszystkie kategorie z API i buduje mapę {'pełna->scieżka': id}"""
     def build_category_map(self) -> None:
-        print("INFO: Pobieranie wszystkich kategorii z API...")
+        print("INFO: Pobieranie wszystkich kategorii i budowanie mapy ścieżek...")
+        
+        # mapy pomocnicze i docelowa mapa ścieżek
+        id_to_name_map = {}
+        self.id_to_parent_map = {}
+        self.path_to_id_map = {}
+
         response = self.api_client.get_all("categories")
         if response.status_code != 200:
             print(f"ERROR: API kategorii - {response.status_code}")
@@ -39,18 +49,35 @@ class ProductImporter:
         
         try:
             root = ET.fromstring(response.content)
+            category_ids = [int(cat.get('id')) for cat in root.iter('category') if cat.get('id')]
+            print(f"INFO: Znaleziono {len(category_ids)} kategorii. Pobieranie szczegółów...")
+
+            # Zbieramy surowe dane do map pomocniczych
+            for cat_id in category_ids:
+                if cat_id <= 2:  # Pomijamy kategorię ROOT
+                    continue
+                detail_response = self.api_client.get_category(cat_id)
+                if detail_response.status_code == 200:
+                    cat_id_str, cat_name, parent_id_str = self.api_client.parse_category_detail(detail_response)
+                    if cat_name and cat_id_str and parent_id_str:
+                        id_to_name_map[int(cat_id_str)] = cat_name
+                        self.id_to_parent_map[int(cat_id_str)] = int(parent_id_str)
             
-            for cat_elem in root.iter('category'):
-                cat_id = cat_elem.get('id')
-                if cat_id:
-                    detail_response = self.api_client.get_category(int(cat_id))
-                    if detail_response.status_code == 200:
-                        cat_id_str, cat_name = self.api_client.parse_category_detail(detail_response)
-                        if cat_name and cat_id_str:
-                            # Klucz: ID (unikatowe)
-                            self.category_map[int(cat_id_str)] = cat_name
-            
-            print(f"OK: Załadowano {len(self.category_map)} kategorii")
+            # Dla każdej kategorii odtwarzamy jej pełną ścieżkę
+            for cat_id, cat_name in id_to_name_map.items():
+                path = []
+                current_id = cat_id
+                
+                # Pętla "wspina się" po drzewie, zbierając nazwy rodziców
+                while current_id in self.id_to_parent_map and current_id > 2:
+                    path.insert(0, id_to_name_map[current_id])
+                    current_id = self.id_to_parent_map[current_id]
+                
+                # Dodajemy do mapy ścieżek
+                self.path_to_id_map[tuple(path)] = cat_id
+
+            print(f"OK: Zbudowano unikalną mapę dla {len(self.path_to_id_map)} ścieżek kategorii.")
+        
         except Exception as e:
             print(f"ERROR: Budowanie mapy kategorii - {e}")
 
@@ -71,10 +98,12 @@ class ProductImporter:
             limit = self.config['import'].get('products_limit', len(products))
             products = products[:limit]
             
-            for idx, product in enumerate(products):
-                self._import_product(product, features_map)
-                if (idx + 1) % 100 == 0:
-                    print(f"INFO: Przetworzono {idx + 1} produktów...")
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                futures = [executor.submit(self._import_product, product, features_map) for product in products]
+                for idx, future in enumerate(futures):
+                    future.result()  # Wyrzuca wyjątek jeśli się pojawił
+                    if (idx + 1) % 100 == 0:
+                        print(f"INFO: Przetworzono {idx + 1} produktów...")
             
             print(f"OK: Dodano {len(products)} produktów")
         except Exception as e:
@@ -85,20 +114,46 @@ class ProductImporter:
         product_name = product['name']
         product_id = product['id']
         price = product['price']
-        category_name = product['category_name']
+        
         description = product['description']
         images = product.get('images', [])
-        
-        # Szukamy ID kategorii
-        category_id = None
-        for cat_id, cat_name in self.category_map.items():
-            if cat_name == category_name:
-                category_id = cat_id
-                break
-        
-        if not category_id:
-            print(f"ERROR: Nie znaleziono kategorii '{category_name}'")
+
+        # Pobieramy ścieżkę kategorii z danych produktu
+        category_path = product.get('category_path', [])
+        if not category_path:
+            print(f"ERROR: Brak 'category_path' dla produktu '{product_name}'")
             return
+        
+        # Konwertujemy ścieżkę, aby użyć jej jako klucza w mapie
+        category_path_tuple = tuple(category_path)
+        
+        # Szukamy ID kategorii na podstawie PEŁNEJ ŚCIEŻKI w nowej mapie
+        leaf_category_id = self.path_to_id_map.get(category_path_tuple)
+
+        if not leaf_category_id:
+            print(f"ERROR: Nie znaleziono ID dla ścieżki kategorii: '{' -> '.join(category_path)}'")
+            return
+            
+        # Zamiana ceny brutto na netto
+        price = round(price / (1 + self.vat_rate), 4)
+
+        # Tworzymy listę wszystkich kategorii nadrzędnych
+        category_ids = []
+        current_id = leaf_category_id
+
+        # Pętla działa, dopóki mamy poprawne ID i nie doszliśmy do samej góry (ID 0 lub 1)
+        while current_id and current_id > 1: 
+            category_ids.append(current_id)
+            # Szukamy aktualnego rodzica
+            current_id = self.id_to_parent_map.get(current_id)
+
+        # Dodajemy kategorię domyślną z configu, jeśli jej nie ma na liście
+        home_category_id = self.config['import'].get('HOME_CATEGORY_ID', 2)
+        if home_category_id not in category_ids:
+            category_ids.append(home_category_id)
+
+        # Ustawiamy domyślną kategorię na liść
+        default_category_id = leaf_category_id
 
         # Tworzymy cechy dla produktu
         feature_values_map = {} 
@@ -127,9 +182,9 @@ class ProductImporter:
             print(f"INFO: Brak atrybutów dla produktu ID {product_id}")
 
         # Budujemy XML
-        xml_elem = XMLBuilder.product(product_name, description, price, product_id, category_id, feature_values_map)
+        xml_elem = XMLBuilder.product(product_name, description, price, product_id, default_category_id, category_ids, feature_values_map)
 
-        # Konwertujemy
+        # Konwerujemy do wsyłania
         xml_string = ET.tostring(xml_elem, encoding='unicode')
 
         xml_bytes = xml_string.encode('utf-8')
@@ -143,6 +198,7 @@ class ProductImporter:
             # Pobieramy i dodajemy obrazy
             if images:
                 process_product_images(prod_id, images, self.config)
+            
         else:
             print(f"ERROR: '{product_name}' - {response.status_code}")
             print(f"RESPONSE: {response.text[:500]}")  

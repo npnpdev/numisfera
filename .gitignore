@@ -84,3 +84,6 @@ prestashop_base/admin/yaml/
 *.swo
 prestashop_base/yaml/
 prestashop_base/var/logs/
+
+# Wyniki scrapowania
+scraper/results/

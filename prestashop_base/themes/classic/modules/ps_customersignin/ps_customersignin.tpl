@@ -48,6 +48,14 @@
         title="{l s='Log in to your customer account' d='Shop.Theme.Customeraccount'}"
         rel="nofollow"
       >
+        <i class="material-icons">&#xE7FE;</i>
+        <span class="hidden-sm-down mt-4">{l s='Zarejestruj się' d='Shop.Theme.Actions'}</span>
+      </a>	  	
+      <a
+        href="{$urls.pages.my_account}"
+        title="{l s='Log in to your customer account' d='Shop.Theme.Customeraccount'}"
+        rel="nofollow"
+      >
         <i class="material-icons">&#xE7FF;</i>
         <span class="hidden-sm-down">{l s='Sign in' d='Shop.Theme.Actions'}</span>
       </a>

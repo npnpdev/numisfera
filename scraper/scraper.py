@@ -1,11 +1,14 @@
 import requests
-from bs4 import BeautifulSoup
 import json
 import time
-from urllib.parse import urljoin
 import tomllib
+import re
+from bs4 import BeautifulSoup
 from pathlib import Path
+from urllib.parse import urljoin
 from typing import List, Dict, Optional
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 class Config:
     def __init__(self, config_path: str = 'config.toml'):
@@ -29,6 +32,7 @@ class Config:
         self.categories_file = data['output']['categories_file']
         self.products_file = data['output']['products_file']
         self.products_detailed_file = data['output']['products_detailed_file']
+        self.max_workers = data['scraper'].get('MAX_WORKERS', 10)
 
 class HTTPClient:
     def __init__(self, config: Config):
@@ -52,10 +56,39 @@ class Scraper:
         self.config = config
         self.http = http
     
-    """
-    Pobiera: Wszystkie kategorie ze strukturą hierarchiczną
-    Zwraca: Lista kategorii z hierarchią (dzieci w 'children')
-    """
+    """Czyści opis produktu z tagów <iframe> i ich zawartości"""
+    def _clean_description(self, description: str) -> str:
+        if not description:
+            return ''
+        # Usuwamy wszystkie iframe wraz z ich zawartością
+        description = re.sub(r'<iframe.*?</iframe>', '', description, flags=re.DOTALL | re.IGNORECASE)
+        return description
+
+    """Tworzy listę kategorii-liści, każda z pełną ścieżką do niej."""
+    def _get_leaf_categories(self, tree: List[Dict]) -> List[Dict]:
+        leaf_nodes_with_paths = []
+        
+        def traverse(nodes: List[Dict], current_path: List[str]):
+            for node in nodes:
+                # Tworzymy nową ścieżkę dla tej gałęzi, dodając aktualną nazwę
+                new_path = current_path + [node['name']]
+                
+                if 'children' in node and node['children']:
+                    # Jeśli są dzieci, idziemy głębiej
+                    traverse(node['children'], new_path)
+                else:
+                    # To jest liść. Zapisujemy jego dane razem z pełną ścieżką.
+                    leaf_info = {
+                        'name': node['name'],
+                        'url': node['url'],
+                        'path': new_path
+                    }
+                    leaf_nodes_with_paths.append(leaf_info)
+        
+        traverse(tree, [])
+        return leaf_nodes_with_paths
+
+    """ Pobiera cała listę kategorii i buduje z niej drzewo kategorii """
     def scrape_categories(self) -> List[Dict]:
         print("ETAP 1: Pobieranie kategorii...")
         
@@ -107,7 +140,7 @@ class Scraper:
             
             # Sprawdzamy czy li ma klasę "parent" (czyli ma podkategorie)
             if 'parent' in li.get('class', []):
-                # Zchodzimy o poziom niżej
+                # Schodzimy o poziom niżej
                 node['children'] = self._build_tree(li, level + 1)
             
             nodes.append(node)
@@ -116,66 +149,78 @@ class Scraper:
 
     """
     Pobiera: wszystkie produkty ze wszystkich liści kategorii
-    Argumenty: categories - drzewo kategorii
     Zwraca: Lista produktów: [{id, name, link, image, price, description, producer, category_name}, ...]
     """
     def scrape_products(self, categories: List[Dict]) -> List[Dict]:
         print("\nETAP 2: Pobieranie produktów...")
         
-        products = []
-        self._traverse_leaf_categories(categories, products)
-        
-        print(f"OK: Pobrano {len(products)} produktów")
-        return products
+        leaf_categories = self._get_leaf_categories(categories)
 
-    """Przechodzi rekurencyjnie przez drzewo i pobiera produkty tylko z liści"""
-    def _traverse_leaf_categories(self, tree: List[Dict], products: List[Dict]):
-        for node in tree:
-            if len(products) >= self.config.max_products_total:
-                return
+        all_products = []
+        products_lock = Lock()
+
+        with ThreadPoolExecutor(max_workers=self.config.max_workers) as executor:
+            futures = {executor.submit(self._scrape_products_from_category, cat): cat for cat in leaf_categories}
             
-            if node.get('children'):
-                # Ma dzieci - schodzimy głębiej
-                self._traverse_leaf_categories(node['children'], products)
-            else:
-                # To liść - pobieramy produkty z tej kategorii
-                self._scrape_products_from_category(node, products)
+            print(f"INFO: Uruchamiam {self.config.max_workers} wątków do pobrania produktów z {len(leaf_categories)} kategorii...")
+
+            for future in as_completed(futures):
+                category_data = futures[future]
+                try:
+                    products_from_category = future.result()
+                    
+                    with products_lock:
+                        if len(all_products) < self.config.max_products_total:
+                            # Obliczamy ile jeszcze możemy dodać produktów
+                            remaining_space = self.config.max_products_total - len(all_products)
+                            
+                            # Dodajemy tylko tyle, ile brakuje do limitu
+                            products_to_add = products_from_category[:remaining_space]
+                            all_products.extend(products_to_add)
+                            
+                            print(f"OK: Pobrano {len(products_from_category)} prod. z '{category_data['name']}'. Dodano {len(products_to_add)}. Łącznie: {len(all_products)}")
+                            
+                            if len(all_products) >= self.config.max_products_total:
+                                print("INFO: Osiągnięto globalny limit produktów. Zatrzymuję pobieranie z kolejnych kategorii.")
+                                # Anulujemy pozostałe zadania, które jeszcze się nie rozpoczęły
+                                for f in futures:
+                                    if not f.done():
+                                        f.cancel()
+                                break # Przerywamy główną pętlę as_completed
+                except Exception as exc:
+                    print(f"ERROR: Błąd podczas przetwarzania kategorii {category_data['name']}: {exc}")
+
+        final_products = all_products
+        
+        print(f"\nOK: Zakończono Etap 2. Pobrano {len(final_products)} produktów.")
+        return final_products
 
     """Pobiera produkty z jednej kategorii liścia"""
-    def _scrape_products_from_category(self, category: Dict, products: List[Dict]):
+    def _scrape_products_from_category(self, category: Dict) -> List[Dict]:
         category_url = category['url']
-        category_name = category['name']
-        
-        print(f"INFO: Pobieranie produktów z: {category_name}")
+        category_path = category['path']  # Używamy ścieżki kategorii
+        products_from_category = []
         
         page = self.http.get_page(category_url)
         if not page:
-            return
-        
-        # Znajdujemy kontener z produktami
+            return products_from_category
+
         products_container = page.select_one(self.config.data['page_locators']['products_container'])
         if not products_container:
-            print(f"WARNING: Brak kontenera produktów w {category_name}")
-            return
-        
-        # Iterujemy po wszystkich produktach
+            return products_from_category
+
         product_items = products_container.select(self.config.data['page_locators']['product_item'])
         
-        count = 0
         for product_item in product_items:
-            if len(products) >= self.config.max_products_total:
-                break
-            
-            # Wyciągamy dane produktu
-            product_data = self._extract_product_data(product_item, category_name)
+            # Przekazujemy całą ścieżkę
+            product_data = self._extract_product_data(product_item, category_path)
             if product_data:
-                products.append(product_data)
-                count += 1
-        
-        print(f"OK: Pobrano {count} produktów z {category_name}")
+                products_from_category.append(product_data)
+                
+        return products_from_category
 
     """Wyciąga dane z jednego produktu"""
-    def _extract_product_data(self, product_item, category_name: str) -> Optional[Dict]:
+    def _extract_product_data(self, product_item, category_path: List[str]) -> Optional[Dict]:
         try:
             locators = self.config.data['product_locators']
             
@@ -197,7 +242,7 @@ class Scraper:
                 'id': product_id,
                 'name': name,
                 'link': link,
-                'category_name': category_name
+                'category_path': category_path  # ZAPISUJEMY PEŁNĄ ŚCIEŻKĘ
             }
         
         except Exception as e:
@@ -219,21 +264,24 @@ class Scraper:
     Zwraca: Lista produktów ze szczegółami: [{name, price, description, attributes, images}]
     """
     def scrape_product_details(self, products: List[Dict]) -> List[Dict]:
-        print("\nETAP 3: Pobieranie szczegółów produktów...")
+        print(f"\nETAP 3: Pobieranie szczegółów dla {len(products)} produktów...")
         
         detailed_products = []
-        
-        for idx, product in enumerate(products):
-            print(f"INFO: [{idx+1}/{len(products)}] {product['name']}")
-            
-            details = self._fetch_product_details(product['link'])
+
+        product_links = [p['link'] for p in products]
+
+        with ThreadPoolExecutor(max_workers=self.config.max_workers) as executor:
+            print(f"INFO: Uruchamiam {self.config.max_workers} wątków...")
+            results = list(executor.map(self._fetch_product_details, product_links))
+
+        # Połącz wyniki z oryginalnymi danymi
+        for i, product in enumerate(products):
+            details = results[i]
             if details:
-                # Łączymy dane podstawowe ze szczegółami
-                full_product = {
-                    **product,
-                    **details
-                }
+                full_product = {**product, **details}
                 detailed_products.append(full_product)
+            else:
+                print(f"WARNING: Nie udało się pobrać szczegółów dla: {product['name']}")
         
         print(f"OK: Pobrano szczegóły dla {len(detailed_products)} produktów")
         return detailed_products
@@ -255,6 +303,7 @@ class Scraper:
             # Opis
             desc_elem = page.select_one(locators['description'])
             description = desc_elem.decode_contents() if desc_elem else None
+            description = self._clean_description(description)  # Usuwamy <iframe>
 
             # Zdjęcia
             images = self._extract_high_res_photos(page, locators)
@@ -273,18 +322,31 @@ class Scraper:
         except Exception as e:
             print(f"ERROR: Pobieranie szczegółów produktu: {e}")
             return None
-
+    
     """Wyciąga linki do zdjęć w wysokiej rozdzielczości"""
     def _extract_high_res_photos(self, page: BeautifulSoup, locators: Dict) -> List[str]:
         images = []
+
+        # Sprawdzamy czy istnieje galeria zdjęć
         photo_links = page.select(locators['high_res_photos'])
         
-        # Bierzemy ilość zdjęć zgodnie z configiem
-        for link in photo_links[:self.config.max_images_per_product]:
-            href = link.get('href')
-            if href:
-                full_url = urljoin(self.config.base_url, href)
-                images.append(full_url)
+        if photo_links:
+            for link in photo_links[:self.config.max_images_per_product]:
+                href = link.get('href')
+                if href:
+                    full_url = urljoin(self.config.base_url, href)
+                    images.append(full_url)
+        
+        # Jeśli nie ma galerii, sprawdzamy czy jest pojedyncze zdjęcie główne
+        elif 'main_single_photo' in locators:
+            single_photo_link = page.select_one(locators['main_single_photo'])
+            if single_photo_link:
+                href = single_photo_link.get('href')
+                if href:
+                    full_url = urljoin(self.config.base_url, href)
+                    # Duplikujemy link tyle razy, ile jest dozwolonych zdjęć
+                    for _ in range(self.config.max_images_per_product):
+                        images.append(full_url)
         
         return images
 
@@ -311,14 +373,22 @@ if __name__ == "__main__":
     http = HTTPClient(config)
     scraper = Scraper(config, http)
     
+    start = time.time()
     # Pobieramy kategorie
     categories = scraper.scrape_categories()
-    
+
+    fetch_time = time.time()
+    print(f"ETAP 1 zakończony w {fetch_time - start:.1f} sekund")
+
     # Pobieramy produkty
     products = scraper.scrape_products(categories)
+    fetch_time = time.time()
+    print(f"ETAP 2 zakończony w {fetch_time - start:.1f} sekund")
     
     # Pobieramy szczegóły produktów
     products_detailed = scraper.scrape_product_details(products)
+    fetch_time = time.time()
+    print(f"ETAP 3 zakończony w {fetch_time - start:.1f} sekund")
     
     # Zapisujemy wyniki do plików JSON
     config.results_dir.mkdir(exist_ok=True)

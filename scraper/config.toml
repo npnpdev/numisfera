@@ -4,7 +4,8 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 request_delay = 1
 timeout = 10
 encoding = "utf-8"
-max_products_total = 50
+max_products_total = 1000
+MAX_WORKERS = 12
 max_images_per_product = 2
 
 [selectors.categories]
@@ -31,6 +32,7 @@ producer = "div.manufacturer > a.brand"
 price = "div.price em.main-price"
 description = "div#box_description div.resetcss[itemprop='description']"
 high_res_photos = "div.smallgallery a.gallery"
+main_single_photo = "div.mainimg a.js__gallery-anchor-image"
 attributes_table_rows = "div#box_productdata table tr"
 attribute_key = "td.name"
 attribute_value = "td.value"
