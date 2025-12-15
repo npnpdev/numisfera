@@ -4,7 +4,7 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 request_delay = 1
 timeout = 10
 encoding = "utf-8"
-max_products_total = 100
+max_products_total = 1000
 MAX_WORKERS = 12
 max_images_per_product = 2
 

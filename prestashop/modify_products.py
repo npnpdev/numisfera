@@ -322,8 +322,8 @@ class ProductModifier:
 
 if __name__ == "__main__":
     modifier = ProductModifier()
-    modifier._set_heavy_products()
-    modifier._create_promotions()
-    modifier._create_variants()
+    modifier.set_heavy_products()
+    modifier.create_promotions()
+    modifier.create_variants()
 
     print("INFO: Modyfikacje produktów zakończone.")

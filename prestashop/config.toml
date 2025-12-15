@@ -6,11 +6,11 @@ verify_ssl = false
 
 [import]
 HOME_CATEGORY_ID = 2
-products_limit = 100
+products_limit = 1000
 product_quantity_range = [0, 10]  # min, max
 vat_rate = 0.23
 active = true
-MAX_WORKERS = 6
+MAX_WORKERS = 4
 
 [modifications]
 num_of_heavy_products = 10
