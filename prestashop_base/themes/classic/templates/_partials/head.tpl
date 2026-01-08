@@ -88,4 +88,17 @@
   {$HOOK_HEADER nofilter}
 {/block}
 
+{block name='ga_registration_destination'}
+<script>
+(function () {
+  if (window.location.pathname !== '/') return;
+  if (document.referrer === 'https://localhost/logowanie?create_account=1') {
+    if (typeof gtag === 'function') {
+      gtag('event', 'registration_destination');
+    }
+  }
+})();
+</script>
+{/block}
+
 {block name='hook_extra'}{/block}
