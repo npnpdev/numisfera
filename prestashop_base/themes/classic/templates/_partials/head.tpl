@@ -101,4 +101,22 @@
 </script>
 {/block}
 
+{block name='ga_banner_click'}
+<script>
+document.addEventListener('click', function(e){
+  const a = e.target.closest && e.target.closest('a');
+  if (!a) return;
+
+  if (a.closest('#carousel')) {
+    if (typeof gtag === 'function') {
+      gtag('event', 'banner_click', {
+        link_url: a.href || window.location.href
+      });
+    }
+  }
+});
+</script>
+{/block}
+
+
 {block name='hook_extra'}{/block}
