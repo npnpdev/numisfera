@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.8'
 
 volumes:
   db-data:
@@ -17,6 +17,12 @@ services:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
     restart: always
+
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
   prestashop-git:
     build:
       dockerfile: .docker/Dockerfile
@@ -49,6 +55,11 @@ services:
     volumes:
       - ./:/var/www/html/:delegated
       - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
   nginx:
     image: nginx:1.25-alpine
     depends_on:
@@ -60,6 +71,11 @@ services:
       - "443:443"
       - "80:80"
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
@@ -67,4 +83,9 @@ services:
     ports:
       - "8025:8025"
       - "1025:1025"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 128M
 
