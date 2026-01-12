@@ -10,10 +10,10 @@
     }
   ],
   "require": {
-    "php": ">=5.6"
+    "php": ">=5.4"
   },
   "require-dev": {
-    "prestashop/php-dev-tools": "^4.3"
+    "prestashop/php-dev-tools": "^3.4"
   },
   "config": {
     "preferred-install": "dist",
