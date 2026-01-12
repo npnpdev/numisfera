@@ -1,11 +1,13 @@
-# Używamy wersji stabilnej. Ona NIE nadpisuje plików przy starcie!
 FROM prestashop/prestashop:8.1-apache
 
-# Kopiujemy pliki bezpośrednio do obrazu
+# Kopiujemy Twoje pliki (razem z tym parameters.php, który przed chwilą zrobiłeś)
 COPY ./prestashop/ /var/www/html/
 
-# Naprawiamy uprawnienia, żeby klaster ich nie odrzucił
+# USUWAMY FOLDER INSTALL - to wyłączy asystenta instalacji raz na zawsze
+RUN rm -rf /var/www/html/install
+
+# Naprawiamy uprawnienia
 RUN chown -R www-data:www-data /var/www/html
 
-# Wyłączamy automatyczny instalator
+# Wyłączamy auto-instalator, bo mamy już własny plik konfiguracyjny
 ENV PS_INSTALL_AUTO=0
