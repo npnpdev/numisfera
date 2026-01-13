@@ -35,6 +35,9 @@ php /init_db.php
     grep "cookie_key" "$DEST/app/config/parameters.php"
     echo "----------------------------------"
 
+    # Naprawa błędu ParameterNotFoundException (brakujący mailer)
+    php -r '$path = "/var/www/html/app/config/parameters.php"; $conf = include $path; $missing = ["mailer_transport" => "smtp", "mailer_host" => "127.0.0.1", "mailer_user" => null, "mailer_password" => null, "mailer_port" => null, "secret" => "secret_key_rsww"]; $conf["parameters"] = array_merge($missing, $conf["parameters"]); file_put_contents($path, "<?php\nreturn " . var_export($conf, true) . ";");'
+
     # A. KOPIOWANIE PATCHA (wszystkie 5 folderów)
     echo "Rozpoczynam patchowanie wszystkich katalogów (cp -av)..."
     cp -av "$SRC_FINAL/." "$DEST/" 2>&1
