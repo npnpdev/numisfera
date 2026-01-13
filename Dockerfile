@@ -1,9 +1,14 @@
 FROM prestashop/prestashop:1.7.8-apache
 
-# 1. Kopiujemy folder z patchem do środka (żeby był dostępny ręcznie), ale go nie uruchamiamy
+# Kopiujemy patch (żeby był dostępny)
 COPY ./patch_final /usr/src/prestashop_patch
 
-# 2. Ustawiamy podstawowe uprawnienia, żeby Presta mogła działać
-RUN chown -R www-data:www-data /var/www/html
+# Kopiujemy nasz skrypt naprawczy
+COPY auto_init.sh /auto_init.sh
 
-# 3. Brak ENTRYPOINT - Presta wystartuje swoim domyślnym skryptem
+# Uprawnienia
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod +x /auto_init.sh
+
+# Uruchamiamy przez nasz skrypt
+ENTRYPOINT ["/auto_init.sh"]
