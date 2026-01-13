@@ -17,8 +17,10 @@ COPY ./patch_final /usr/src/prestashop_patch
 
 # 5. Uprawnienia i czyszczenie
 RUN rm -rf /var/www/html/install && \
-    chown -R www-data:www-data /var/www/html && \
-    chmod +x /auto_init.sh
+   chown -R www-data:www-data /var/www/html && \
+  chmod +x /auto_init.sh
+#RUN chown -R www-data:www-data /var/www/html && \
+#   chmod +x /auto_init.sh
 
 ENV PS_INSTALL_AUTO=0
 ENTRYPOINT ["/auto_init.sh"]

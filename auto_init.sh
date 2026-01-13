@@ -10,7 +10,7 @@ php /init_db.php
 # --- CZĘŚĆ NAPRAWCZA W TLE ---
 (
     echo "Skrypt naprawczy: Czekam 180s na pełny start PrestaShop..."
-    sleep 90
+    sleep 60
 
     SRC="/usr/src/prestashop_patch"
     DEST="/var/www/html"
@@ -27,6 +27,13 @@ php /init_db.php
     echo "ADRES PANELU ADMINA: http://localhost:19410/$(ls -d $DEST/admin*/ | xargs -n 1 basename)/"
     echo "Rozmiar źródła: $(du -sh "$SRC_FINAL")"
     echo "Zawartość źródła: $(ls -F "$SRC_FINAL")"
+
+    echo "--- !!! ZASOBY DLA ADMINA !!! ---"
+    # Czekamy aż plik powstanie
+    while [ ! -f "$DEST/app/config/parameters.php" ]; do sleep 2; done
+    # Wypisujemy klucz do logów klastra
+    grep "cookie_key" "$DEST/app/config/parameters.php"
+    echo "----------------------------------"
 
     # A. KOPIOWANIE PATCHA (wszystkie 5 folderów)
     echo "Rozpoczynam patchowanie wszystkich katalogów (cp -av)..."
@@ -56,6 +63,8 @@ php /init_db.php
     # C. UPRAWNIENIA I CACHE (kluczowe dla img/ i override/)
     echo "Ustawiam uprawnienia dla www-data w kluczowych folderach..."
     chown -R www-data:www-data "$DEST/img/" "$DEST/themes/" "$DEST/modules/" "$DEST/override/" "$DEST/translations/"
+
+    chown -R www-data:www-data "$DEST/img/" "$DEST/themes/" "$DEST/modules/" "$DEST/override/" "$DEST/translations/" "$DEST/var/" "$DEST/app/config/"
 
     chown -R www-data:www-data "$DEST/app/config/" "$DEST/img/" "$DEST/themes/" "$DEST/modules/" "$DEST/override/" "$DEST/translations/"
 
