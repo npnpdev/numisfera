@@ -9,25 +9,46 @@ php /init_db.php
 
 # --- CZĘŚĆ NAPRAWCZA W TLE ---
 (
-    # Czekamy 60 sekund aż skrypt Presty (docker_run.sh) skończy rozpakowywanie i startowanie
+    # Czekamy 180 sekund (3 minuty) aż Presta skończy się rozpakowywać
+    echo "Skrypt naprawczy: Czekam 180s na pełny start PrestaShop..."
     sleep 180
-    echo "Rozpoczynam patchowanie plików..."
 
-    # Ścieżka gdzie w Dockerfile wrzuciłeś swoją czystą paczkę
     SRC="/usr/src/prestashop_patch"
     DEST="/var/www/html"
 
-    # A. KOPIOWANIE PATCHA (Modyfikowane pliki)
-    # Używamy -r, aby skopiować całą strukturę (themes i modules) na raz
+    echo "----------------------------------------------------"
+    echo "DIAGNOSTYKA START: $(date)"
+    
+    # KROK 1: Sprawdzenie folderu źródłowego
     if [ -d "$SRC" ]; then
-        cp -rv $SRC/* $DEST/
-        echo "Kopiowanie plików patcha zakończone."
+        echo "OK: Folder źródłowy $SRC istnieje."
+        echo "Zawartość $SRC (ls -la):"
+        ls -la "$SRC"
+        echo "Rozmiar danych w źródle (du -sh):"
+        du -sh "$SRC"
     else
-        echo "BŁĄD: Folder $SRC nie istnieje!"
+        echo "BŁĄD KRYTYCZNY: Folder $SRC NIE ISTNIEJE w kontenerze!"
+        echo "Sprawdź czy w Dockerfile masz: COPY <folder> $SRC"
+        exit 1
     fi
 
-    # B. USUWANIE (Lista plików do wywalenia - "Syf")
-    # Usunąłem z tej listy plik .png slidera, bo zaznaczyłeś, że jest potrzebny
+    # KROK 2: Sprawdzenie celu przed kopiowaniem
+    echo "Stan folderu docelowego $DEST/themes przed patchem:"
+    ls -la "$DEST/themes" 2>/dev/null | head -n 10
+
+    # A. KOPIOWANIE PATCHA
+    echo "Rozpoczynam patchowanie plików (cp -av)..."
+    # Używamy /. aby skopiować ZAWARTOŚĆ folderu patcha do html
+    # 2>&1 przekierowuje błędy kopiowania do logów Dockera
+    cp -av "$SRC/." "$DEST/" 2>&1
+
+    if [ $? -eq 0 ]; then
+        echo "Kopiowanie plików zakończone sukcesem."
+    else
+        echo "WYSTĄPIŁ BŁĄD podczas kopiowania! Kod wyjścia: $?"
+    fi
+
+    # B. USUWANIE (Twoja lista plików "Syf")
     echo "Usuwanie zbędnych plików..."
     rm -f "$DEST/modules/blockreassurance/config_pl.xml"
     rm -f "$DEST/modules/dashtrends/config_pl.xml"
@@ -68,14 +89,16 @@ php /init_db.php
     rm -f "$DEST/modules/statssearch/config_pl.xml"
 
     # C. KOŃCZENIE - Uprawnienia i Cache
-    # Ważne: Nadajemy uprawnienia też dla themes (bo tam jest theme.css)
-    chown -R www-data:www-data $DEST/modules/
-    chown -R www-data:www-data $DEST/themes/
-    
-    # Czyszczenie cache, żeby Presta zobaczyła nowe pliki TPL i CSS
-    rm -rf $DEST/var/cache/prod/*
-    
-    echo "Patchowanie zakończone pomyślnie. Sklep jest gotowy."
+    echo "Ustawiam uprawnienia dla www-data..."
+    chown -R www-data:www-data "$DEST/modules/"
+    chown -R www-data:www-data "$DEST/themes/"
+
+    echo "Czyszczenie cache Smarty i Symfony..."
+    rm -rf "$DEST/var/cache/prod/*"
+    rm -rf "$DEST/var/cache/dev/*"
+
+    echo "DIAGNOSTYKA KONIEC. Patchowanie zakończone."
+    echo "----------------------------------------------------"
 ) &
 
 # 4. Start oryginalnego skryptu Presty
