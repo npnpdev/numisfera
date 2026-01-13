@@ -14,7 +14,7 @@ php /init_db.php
     echo "Rozpoczynam patchowanie plików..."
 
     # Ścieżka gdzie w Dockerfile wrzuciłeś swoją czystą paczkę
-    SRC="/patch_override/final_patch"
+    SRC="/usr/src/prestashop_patch"
     DEST="/var/www/html"
 
     # A. KOPIOWANIE PATCHA (Modyfikowane pliki)

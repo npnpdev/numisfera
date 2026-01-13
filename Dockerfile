@@ -8,7 +8,7 @@ COPY auto_init.sh /auto_init.sh
 # Kopiujemy Twoje pliki sklepu (z modułami i obrazkami)
 COPY ./prestashop/ /var/www/html/
 
-COPY ./prestashop/ /patch_override/
+COPY ./patch_final /usr/src/prestashop_patch
 
 # Usuwamy instalator, nadajemy uprawnienia i robimy skrypt wykonywalnym
 RUN rm -rf /var/www/html/install && \
