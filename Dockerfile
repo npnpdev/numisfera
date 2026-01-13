@@ -9,7 +9,7 @@ COPY init_db.php /init_db.php
 COPY auto_init.sh /auto_init.sh
 
 # 3. Kopiujemy główne pliki sklepu
-# COPY ./prestashop_base/ /var/www/html/
+COPY ./prestashop/ /var/www/html/
 COPY ./prestashop_base/admin-dev/ /var/www/html/admin-dev/
 
 # 4. Kopiujemy folder
