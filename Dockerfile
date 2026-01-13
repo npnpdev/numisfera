@@ -1,4 +1,4 @@
-FROM prestashop/prestashop:8.1-apache
+FROM prestashop/prestashop:1.7.8-apache
 
 # 1. Instalujemy unzip (niezbędny do wypakowania patcha)
 #RUN apt-get update && apt-get install -y unzip

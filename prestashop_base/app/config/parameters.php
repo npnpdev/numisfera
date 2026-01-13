@@ -21,7 +21,5 @@
     'cookie_key' => 'Rva2EngMVKHQxgTWWrsfsEEBku3XfsFIRd1NcRToKYhyJrrgjnbqrCPKMMKYjK1L',
     'cookie_iv' => 'G1SXA5g6Yg1QZTLVEseahpmWh7AiH3Yi',
     'new_cookie_key' => 'def00000491975d0239dc19d02c44cf88715f3fc8a8348a1a8f59debae391a0feabde77529a36c1ae7ffdf4fb3a1dd12882cdeeb80b24cd6fb70fc37ad84365142a3bb06',
-    'api_public_key' => '',
-    'api_private_key' => '',
   ),
 );
