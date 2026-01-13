@@ -11,6 +11,8 @@ COPY auto_init.sh /auto_init.sh
 # 3. Kopiujemy główne pliki sklepu
 COPY ./prestashop_base/ /var/www/html/
 
+RUN composer install -d /var/www/html --no-dev --optimize-autoloader
+
 # 4. Kopiujemy folder
 COPY ./patch_final /usr/src/prestashop_patch
 
