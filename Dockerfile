@@ -1,22 +1,26 @@
 FROM prestashop/prestashop:8.1-apache
 
-# Kopiujemy pliki Twojego automatu bazy danych
+# 1. Instalujemy unzip (niezbędny do wypakowania patcha)
+RUN apt-get update && apt-get install -y unzip
+
+# 2. Kopiujemy pliki bazy i skrypty
 COPY ./prestashop_base/prestashop_init.sql /tmp/init.sql
 COPY init_db.php /init_db.php
 COPY auto_init.sh /auto_init.sh
 
-# Kopiujemy Twoje pliki sklepu (z modułami i obrazkami)
+# 3. Kopiujemy główne pliki sklepu
 COPY ./prestashop/ /var/www/html/
 
-COPY ./patch_final /usr/src/prestashop_patch
+# 4. KLUCZOWY MOMENT: Kopiujemy ZIPa (który jest na branchu) i go rozpakowujemy
+COPY ./sklep_patch.zip /tmp/patch.zip
+RUN unzip /tmp/patch.zip -d /usr/src/ && \
+    mv /usr/src/patch_final /usr/src/prestashop_patch && \
+    rm /tmp/patch.zip
 
-# Usuwamy instalator, nadajemy uprawnienia i robimy skrypt wykonywalnym
+# 5. Uprawnienia i czyszczenie
 RUN rm -rf /var/www/html/install && \
     chown -R www-data:www-data /var/www/html && \
     chmod +x /auto_init.sh
 
-# Wyłączamy instalator Presty
 ENV PS_INSTALL_AUTO=0
-
-# To jest kluczowe: mówimy kontenerowi, żeby startował od naszego skryptu
 ENTRYPOINT ["/auto_init.sh"]
