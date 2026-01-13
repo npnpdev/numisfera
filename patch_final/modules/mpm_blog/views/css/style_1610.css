@@ -1,0 +1,18 @@
+#nav-sidebar .menu li#maintab-AdminBlog .icon-AdminBlog:before{
+  content: " ";
+  background: url("../../logo.png");
+  width: 23px !important;
+  height: 24px !important;
+  display: block;
+  background-size: 100%;
+  margin-top: -14px;
+  position: absolute;
+  margin-left: -2px !important;
+}
+@media (max-height: 850px){
+  body:not(.page-sidebar-closed) #nav-sidebar ul.menu li#maintab-AdminBlog>a.title i.icon-AdminBlog:before{
+    width: 16px !important;
+    height: 17px !important;
+    margin-left: 2px !important;
+  }
+}

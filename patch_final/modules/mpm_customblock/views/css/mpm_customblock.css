@@ -1,0 +1,28 @@
+.customblock{
+  width: 100%;
+  float: left;
+  padding: 20px 100px;
+  margin: 20px 0px;
+  background-color: #f5f5f5;
+}
+.custom-list-item{
+  float: left;
+  padding: 10px;
+  display: block;
+  width: 25%;
+  text-align: center;
+}
+.custom-list-item .custom-item-title{
+  font-family: Lato;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.custom-list-item .custom-item-description{
+  font-family: Lato;
+  font-size: 14px;
+  color: #949496;
+}

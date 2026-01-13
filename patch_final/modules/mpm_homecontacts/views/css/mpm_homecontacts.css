@@ -1,0 +1,45 @@
+.homecontacts{
+  width: 100%;
+  float: left;
+  margin-top: 20px;
+  padding: 0px 100px;
+}
+.homecontacts_phone,
+.homecontacts_email,
+.homecontacts_working_days{
+  width: 33%;
+  padding: 10px;
+  float: left;
+  text-align: center;
+}
+.homecontacts_phone .phone_icon,
+.homecontacts_email .email_icon,
+.homecontacts_working_days .working_days_icon{
+  float: left;
+  padding-right: 15px;
+}
+.homecontacts_phone .phone_icon i,
+.homecontacts_email .email_icon i,
+.homecontacts_working_days .working_days_icon i{
+  font-size: 44px;
+  color: #d19e65;
+}
+.homecontacts_phone_right,
+.homecontacts_email_right,
+.homecontacts_working_days_right{
+  float: left;
+}
+.homecontacts .item_content{
+  display: inline-block;
+}
+.item_block_title{
+  color: #d19e65;
+  font-size: 17px;
+  font-family: Lato;
+  padding: 2px 0px 0px 0px;
+}
+.item_block_description{
+  color: #444445;
+  font-size: 14px;
+  font-family: Lato;
+}

@@ -1,0 +1,10 @@
+.default_settings .col-lg-3{
+  text-align: left !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+}
+.default_settings{
+  border-bottom: 1px solid #dadada;
+  margin-top: 30px;
+  padding-bottom: 10px;
+}

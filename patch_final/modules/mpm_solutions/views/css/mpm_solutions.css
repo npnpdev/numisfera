@@ -1,0 +1,190 @@
+@font-face{
+  font-family: 'mpm-solutions';
+  src: url('../fonts/promo-import-page.eot?sbax19');
+  src: url('../fonts/promo-import-page.eot?sbax19#iefix') format('embedded-opentype'),
+  url('../fonts/promo-import-page.ttf?sbax19') format('truetype'),
+  url('../fonts/promo-import-page.woff?sbax19') format('woff'),
+  url('../fonts/promo-import-page.svg?sbax19#modules_icons_font') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.adminmpmsolutions{
+  background: #FFFFFF;
+}
+
+.mpm_solutions{
+  filter: drop-shadow(0px 4px 25px rgba(0, 0, 0, 0.15));
+  background: #F9F9F9;
+  width: 750px;
+  height: 720px;
+  margin: 0 auto;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.mpm_solutions .top_icon{
+  padding: 20px 0 0 0;
+}
+
+.mpm_solutions .top_icon:before{
+  content: "\e905";
+  font-family: "mpm-solutions";
+  font-weight: normal;
+  font-size: 65px;
+  color: #FFA400;;
+}
+
+.mpm_solutions .description{
+  color: #363A41;
+  font: 600 22px/34px Open Sans;
+  margin: 13px 0 0 0;
+}
+
+.mpm_solutions .module{
+  color: #363A41;
+  font: normal 16px/25px Open Sans;
+  border-bottom: 1px solid #EBEBEB;
+  padding-bottom: 30px;
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 25px;
+}
+
+.mpm_solutions .module a{
+  color: #2B96F8;
+  text-decoration: underline;
+}
+
+.mpm_solutions .module a:hover{
+  text-decoration: none;
+}
+
+.mpm_solutions .not_all{
+  color: #363A41;
+  font: bold 16px/25px Open Sans;
+  margin: 27px 0 27px 0;
+}
+
+.mpm_solutions .help{
+  color: #363A41;
+  font: normal 16px/25px Open Sans;
+}
+
+.mpm_solutions .percent{
+  color: #363A41;
+  font: 800 28px/28px Open Sans;
+  margin: 20px 0 25px 0;
+}
+
+.mpm_solutions .voucher{
+  width: 240px;
+  height: 50px;
+  background: #FFFFFF;
+  border: 1px dashed #E1E1E1;
+  border-radius: 5px;
+  color: #363A41;
+  font: normal 22px/22px Open Sans;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.mpm_solutions .use_it{
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
+  margin-top: 35px;
+}
+
+.mpm_solutions .use_it a{
+  color: #FFFFFF;
+  text-transform: uppercase;
+  font: bold 16px/16px Open Sans;
+  background: #FFA400;
+  box-shadow: 0px 4px 25px rgba(240, 116, 1, 0.15);
+  border-radius: 5px;
+  width: 240px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mpm_solutions .use_it a:before{
+  content: "\e902";
+  font-family: "mpm-solutions";
+  font-weight: normal;
+  font-size: 20px;
+  color: #FFF;
+  margin: -3px 7px 0 0px;
+}
+
+.mpm_solutions .use_it a:hover{
+  background: #FF8A00;
+  text-decoration: none;
+  box-shadow: 0px 4px 25px rgba(240, 116, 1, 0.25);
+  color: #FFF;
+}
+
+.mpm_solutions .use_it .downloads{
+  position: absolute;
+  color: #FFA400;
+  font: 600 12px/16px Open Sans;
+  right: -140px;
+  top: -7px;
+}
+
+.mpm_solutions .use_it .downloads:before{
+  content: "\e900";
+  font-family: "mpm-solutions";
+  font-weight: normal;
+  font-size: 30px;
+  color: #C8C7C7;
+  position: absolute;
+  top: 20px;
+  left: -11px;
+}
+
+.mpm_solutions .footer{
+  height: 69px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 600px;
+  margin: 0 auto;
+  margin-top: 35px;
+  border-top: 1px solid #EBEBEB;
+}
+
+.mpm_solutions .footer a{
+  color: #929292;
+  font: bold 12px/16px Open Sans;
+  text-transform: uppercase;
+}
+
+.mpm_solutions .footer a:hover{
+  text-decoration: none;
+  color: #2B96F8;
+}
+
+.mpm_solutions .footer a:before{
+  content: "\e904";
+  font-family: "mpm-solutions";
+  font-weight: normal;
+  font-size: 20px;
+  margin: 0px 5px 0 0px;
+  vertical-align: -3px;
+}
+
+.mpm_solutions .footer a:nth-child(2):before{
+  content: "\e901";
+  vertical-align: -5px;
+}
+
+.mpm_solutions .footer a:nth-child(3):before{
+  content: "\e903";
+  vertical-align: -4px;
+}

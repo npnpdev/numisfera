@@ -1,0 +1,33 @@
+<?php
+
+global $_MODULE;
+$_MODULE = array();
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_acbd8da8d7575597986b5ea632618fcb'] = 'Product share buttons';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_bbdb72f7beccd380273ef2b598d2743f'] = 'Product social share buttons.';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_f4f70727dc34561dfde1a3c529b6205c'] = 'Settings';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_d85544fce402c7a2a96a48078edaf203'] = 'Facebook';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_93cba07454f06a4a960172bbd6e2a435'] = 'Yes';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_bafd7322c6e97d25b6299b5d6fe8920b'] = 'No';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_2491bc9c7d8731e1ae33124093bc7026'] = 'Twitter';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_a1d7d2089dfd98072df7c45b07f9a89c'] = 'Google +';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_44e2308cdc51a0a1a5350ba3937e0b5e'] = 'Linkedin';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_ce8ae9da5b7cd6c3df2929543a9af92d'] = 'Email';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_86709a608bd914b28221164e6680ebf7'] = 'Pinterest';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_74f27d9acb51afada9040dcc53a0b233'] = 'Pocket';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_0dfec3de88c4e6eead14e739f55bfb26'] = 'Tumblr';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_b632c55a33530d1433e29ffc09ba1151'] = 'Reddit';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_40f096ada7fba0f3987605f129026bfb'] = 'Hackernews';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_630f6dc397fe74e52d5189e2c80f282b'] = 'Back to list';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_3c03a2477581b9a7f4934e0ada943002'] = 'Some error occurred during saving!';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>mpm_socialsharebuttons_dbf808ea93023749d20f80a0e998155f'] = 'Data successfully saved!';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_26cae7718c32180a7a0f8e19d6d40a59'] = 'facebook';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_b73c2d22763d1ce2143a3755c1d0ad3a'] = 'twitter';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_b76a370a2f1a0a5017b053a36ed8d591'] = 'google+';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_f1576406b382b7d1c8c2607f7c563d4f'] = 'linkedin';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_0c83f57c786a0b4a39efab23731c7ebc'] = 'email';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_bb6ec8dcea15643283afe386156af82e'] = 'pinterest';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_9aa91f81de7610b371dd0e6fe4168b01'] = 'pocket';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_8ece64205432c3790f2d531156a8026a'] = 'tumblr';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_5e8a5709f662f8d401f7a00e6137f9ca'] = 'reddit';
+$_MODULE['<{mpm_socialsharebuttons}prestashop>buttonshare_9e8d4d8cab0baf05163340c731a82f4c'] = 'hackernews';

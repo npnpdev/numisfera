@@ -11,11 +11,8 @@ COPY auto_init.sh /auto_init.sh
 # 3. Kopiujemy główne pliki sklepu
 COPY ./prestashop/ /var/www/html/
 
-# 4. KLUCZOWY MOMENT: Kopiujemy ZIPa (który jest na branchu) i go rozpakowujemy
-COPY ./sklep_patch.zip /tmp/patch.zip
-RUN unzip /tmp/patch.zip -d /usr/src/ && \
-    mv /usr/src/patch_final /usr/src/prestashop_patch && \
-    rm /tmp/patch.zip
+# 4. Kopiujemy folder
+COPY ./patch_final /usr/src/prestashop_patch
 
 # 5. Uprawnienia i czyszczenie
 RUN rm -rf /var/www/html/install && \

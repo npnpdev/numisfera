@@ -1,0 +1,42 @@
+#block_home_slider_form #width,
+#block_home_slider_form #height,
+#block_home_slider_form #auto_play,
+.AdminHomeSlider #width_desc,
+.AdminHomeSlider #height_desc,
+.AdminHomeSlider #opacity,
+.AdminHomeSlider #speed{
+  width: 200px !important;
+}
+#table-block_home_slider.block_home_slider td img{
+  max-height: 200px;
+  max-width: 200px;
+}
+.form_group_img img{
+  display: block !important;
+}
+.form_group_img .size{
+  display: block !important;
+  margin: 10px;
+}
+.carousel-homeslider{
+  width: 100%;
+  float: left;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.carousel-feature img{
+  max-width: 100%;
+  float: left;
+}
+.carousel-feature{
+  position: relative;
+}
+.carousel-homeslider .slick-prev{
+  left: 40px;
+}
+.carousel-homeslider .slick-next{
+  right: 40px;
+}
+
+
