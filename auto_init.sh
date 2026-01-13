@@ -10,7 +10,7 @@ php /init_db.php
 # --- CZĘŚĆ NAPRAWCZA W TLE ---
 (
     # Czekamy 60 sekund aż skrypt Presty (docker_run.sh) skończy rozpakowywanie i startowanie
-    sleep 60
+    sleep 180
     echo "Rozpoczynam patchowanie plików..."
 
     # Ścieżka gdzie w Dockerfile wrzuciłeś swoją czystą paczkę
