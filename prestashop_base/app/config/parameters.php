@@ -1,11 +1,11 @@
 <?php return array (
   'parameters' => 
   array (
-    'database_host' => 'mysql',
+    'database_host' => '10.40.71.115',
     'database_port' => '3306',
-    'database_name' => 'prestashop',
+    'database_name' => 'BE_194103',
     'database_user' => 'root',
-    'database_password' => 'prestashop',
+    'database_password' => 'student',
     'database_prefix' => 'ps_',
     'database_engine' => 'InnoDB',
     'mailer_transport' => 'smtp',
