@@ -1,7 +1,7 @@
 FROM prestashop/prestashop:8.1-apache
 
 # 1. Instalujemy unzip (niezbędny do wypakowania patcha)
-RUN apt-get update && apt-get install -y unzip
+#RUN apt-get update && apt-get install -y unzip
 
 # 2. Kopiujemy pliki bazy i skrypty
 COPY ./prestashop_base/prestashop_init.sql /tmp/init.sql
@@ -10,7 +10,7 @@ COPY auto_init.sh /auto_init.sh
 
 # 3. Kopiujemy główne pliki sklepu
 COPY ./prestashop/ /var/www/html/
-COPY ./prestashop_base/admin-dev/ /var/www/html/admin-dev/
+#COPY ./prestashop_base/admin-dev/ /var/www/html/admin-dev/
 
 # 4. Kopiujemy folder
 COPY ./patch_final /usr/src/prestashop_patch

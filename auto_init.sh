@@ -24,6 +24,7 @@ php /init_db.php
 
     echo "----------------------------------------------------"
     echo "DIAGNOSTYKA START: $(date)"
+    echo "ADRES PANELU ADMINA: http://localhost:19410/$(ls -d $DEST/admin*/ | xargs -n 1 basename)/"
     echo "Rozmiar źródła: $(du -sh "$SRC_FINAL")"
     echo "Zawartość źródła: $(ls -F "$SRC_FINAL")"
 
