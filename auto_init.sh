@@ -56,6 +56,8 @@ php /init_db.php
     # C. UPRAWNIENIA I CACHE (kluczowe dla img/ i override/)
     echo "Ustawiam uprawnienia dla www-data w kluczowych folderach..."
     chown -R www-data:www-data "$DEST/img/" "$DEST/themes/" "$DEST/modules/" "$DEST/override/" "$DEST/translations/"
+
+    chown -R www-data:www-data "$DEST/app/config/" "$DEST/img/" "$DEST/themes/" "$DEST/modules/" "$DEST/override/" "$DEST/translations/"
     
     echo "Czyszczenie cache..."
     rm -rf "$DEST/var/cache/*"
