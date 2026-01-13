@@ -10,6 +10,7 @@ COPY auto_init.sh /auto_init.sh
 
 # 3. Kopiujemy główne pliki sklepu
 # COPY ./prestashop_base/ /var/www/html/
+COPY ./prestashop_base/admin-dev/ /var/www/html/admin-dev/
 
 # 4. Kopiujemy folder
 COPY ./patch_final /usr/src/prestashop_patch
