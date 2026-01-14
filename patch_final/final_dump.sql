@@ -4689,6 +4689,7 @@ CREATE TABLE `ps_order_invoice` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
 --
 -- Dumping data for table `ps_order_invoice`
 --
@@ -8456,3 +8457,26 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-01-14  0:18:53
+
+
+-- ==========================================
+-- FIX: LOGO I DOMENA
+-- ==========================================
+UPDATE ps_configuration SET value = 'logo-1762103104.jpg' WHERE name = 'PS_LOGO';
+UPDATE ps_configuration SET value = 'logo-1762103104.jpg' WHERE name = 'PS_LOGO_MAIL';
+UPDATE ps_configuration SET value = 'logo-1762103104.jpg' WHERE name = 'PS_LOGO_INVOICE';
+UPDATE ps_shop_url SET domain = 'localhost:19410', domain_ssl = 'localhost:19410';
+
+-- ==========================================
+-- FIX: USUWANIE PRODUKTÓW 1-15 (BRUTE FORCE)
+-- ==========================================
+-- Usuwamy z głównej tabeli
+DELETE FROM ps_product WHERE id_product <= 15;
+-- Usuwamy ze sklepu
+DELETE FROM ps_product_shop WHERE id_product <= 15;
+-- Usuwamy tłumaczenia (nazwy)
+DELETE FROM ps_product_lang WHERE id_product <= 15;
+-- Usuwamy przypisania zdjęć (żeby nie sypało błędami)
+DELETE FROM ps_image WHERE id_product <= 15;
+-- Usuwamy stany magazynowe
+DELETE FROM ps_stock_available WHERE id_product <= 15;
