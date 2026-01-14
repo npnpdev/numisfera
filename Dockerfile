@@ -1,5 +1,8 @@
 FROM prestashop/prestashop:1.7.8-apache
 
+# Dla bazy danych
+RUN apt-get update && apt-get install -y mariadb-client
+
 # Kopiujemy patch (żeby był dostępny)
 COPY ./patch_final /usr/src/prestashop_patch
 
